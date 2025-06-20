@@ -1,5 +1,5 @@
 # BrickBox
-### versiune 0.0.1
+### versiune 0.0.2
 ----
 ## atentie: proiectul este scris in python 3.10+, versiuni mai vechi nu o sa mearga
 ----
@@ -26,9 +26,5 @@ Asadar, poate fi rulat astfel:
 brick-interface
 ```
 ----
-## Changelog:
-
-versiune 0.0.1
-- initializare proiect cu fisiere generale
-- structura generala de shell -> meniu/joc
+## [Changelog](./changelog.md)
 
