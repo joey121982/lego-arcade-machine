@@ -6,11 +6,11 @@
 
 import pygame
 
-from menu.menu import *
-from brickjump.game import *
-from brickinvaders.game import *
-from brickman.game import *
-from brickfighter.game import *
+from .menu.menu import *
+from .brickjump.game import *
+from .brickinvaders.game import *
+from .brickman.game import *
+from .brickfighter.game import *
 
 # --- info
 # "|" este operatorul bitwise or si aici doar creaza un "union" type de mai multe type-uri

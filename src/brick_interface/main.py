@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import pygame
-from shell import *
-from globals import *
+from .shell import *
+from .globals import *
 
 def run():
     pygame.init()
