@@ -1,5 +1,5 @@
 # BrickBox
-### versiune 0.0.2
+### versiune 0.0.3
 ----
 ## atentie: proiectul este scris in python 3.10+, versiuni mai vechi nu o sa mearga
 ----
@@ -10,7 +10,7 @@
 ----
 ## install
 Din folderul ```src/``` ruleaza:
-* mod editabil
+* mod editabil (recomandat)
 ```sh
 pip install -e .
 ```
@@ -21,7 +21,7 @@ pip install .
 ----
 ## rulare
 Dupa instalare, programul o sa fie instalat in PATH direct de ```pip```, fara sa fie nevoie de etape in plus.
-Asadar, poate fi rulat astfel:
+Asadar, poate fi rulat din ```src/``` astfel:
 ```sh
 brick-interface
 ```

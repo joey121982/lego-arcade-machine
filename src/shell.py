@@ -41,7 +41,9 @@ class Shell:
         if not self.game:
             return
         
-        self.game.update()
+        if self.game.running:
+            self.game.update()
+            
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game
             if ngame == "Brick Invaders":
@@ -50,7 +52,7 @@ class Shell:
             if ngame == "Brick Jump":
                 # self.game = Brickjump(self.screen)
                 return
-            if ngame == "BrickMan":
+            if ngame == "Brick Man":
                 # self.game = Brickman(self.screen)
                 return
             if ngame == "Brick Fighter":
