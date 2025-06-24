@@ -1,5 +1,0 @@
-Metadata-Version: 2.4
-Name: brick-interface
-Version: 0.0.4
-Requires-Dist: pygame
-Dynamic: requires-dist

@@ -1,2 +1,0 @@
-[console_scripts]
-brick-interface = brick_interface.main:run
