@@ -1,4 +1,5 @@
 import pygame
+import math
 
 class Brickinvaders:
     name = "Brick Invaders"
@@ -26,6 +27,12 @@ class Brickinvaders:
         self.spaceship_angle = 0
         self.spaceship_angle_sign = 0
         self.spaceship_angle_increment = 5
+
+        # Background things
+        self.background = pygame.image.load('./assets/BI_background.png').convert()
+        self.background = pygame.transform.scale(self.background, (self.glb.WINWIDTH, self.glb.WINHEIGHT))
+        self.background_width = self.background.get_width()
+        self.background_height = self.background.get_height()
     
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -63,11 +70,21 @@ class Brickinvaders:
 
         self.spaceship_angle = (self.spaceship_velocity // 5) * self.spaceship_angle_increment * -1
         
+    
     def update(self):
-        print("Updating Brick Invaders...")
+        
+        # move spaceship
         self.update_spaceship_position()
-        self.screen.fill((0, 0, 0))
+
+        # background
+        self.tiles = math.ceil(self.screen.get_width() / self.background_width) + 1
+        self.screen.blit(self.background, (0, 0))
+
+        # rotate spaceship logic
         rotated_spaceship = pygame.transform.rotozoom(self.spaceship, self.spaceship_angle, 1)
         rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship_x + 50, self.spaceship_y + 50))
+
+        # draw spaceship
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
+
         pygame.display.flip()
