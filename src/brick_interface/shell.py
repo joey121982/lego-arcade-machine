@@ -31,6 +31,8 @@ class Shell:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if self.game and hasattr(self.game, 'handle_event'):
+                self.game.handle_event(event)
 
     def __init__(self, new_screen, new_globals):
         self.screen = new_screen
@@ -47,7 +49,7 @@ class Shell:
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game
             if ngame == "Brick Invaders":
-                # self.game = Brickinvaders(self.screen)
+                self.game = Brickinvaders(self.screen, self.glb)
                 return
             if ngame == "Brick Jump":
                 # self.game = Brickjump(self.screen)
