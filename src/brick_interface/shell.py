@@ -45,6 +45,13 @@ class Shell:
         
         if self.game.running:
             self.game.update()
+        
+        if hasattr(self.glb, 'return_to_menu') and self.glb.return_to_menu:
+            print("Returning to menu...")
+            self.game.running = False
+            self.game.update()
+            self.glb.return_to_menu = False  # Reset the flag
+            self.game = Menu(self.screen, self.glb)  # Switch back to the menu
             
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game
