@@ -1,5 +1,6 @@
 # BrickBox
-### versiune 0.0.3
+
+### versiune 0.0.4
 ----
 ## atentie: proiectul este scris in python 3.10+, versiuni mai vechi nu o sa mearga
 ----
