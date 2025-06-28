@@ -49,8 +49,9 @@ class Shell:
         if hasattr(self.glb, 'return_to_menu') and self.glb.return_to_menu:
             print("Returning to menu...")
             self.game.running = False
-            self.game.update()
-            self.glb.return_to_menu = False  # Reset the flag
+            self.screen.fill((0, 0, 0))  # clear the screen niga
+            pygame.display.flip()       
+            self.glb.return_to_menu = False 
             self.game = Menu(self.screen, self.glb)  # Switch back to the menu
             
         if isinstance(self.game, Menu) and self.game.new_game != "None":
