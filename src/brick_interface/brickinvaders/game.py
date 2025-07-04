@@ -1,6 +1,18 @@
 import pygame
 import math
 
+class Bullet (pygame.sprite.Sprite):
+    def __init__(self, x, y, image, speed, angle, color):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(center=(x, y))
+        self.speed = speed
+        self.angle = angle
+        self.color = color
+
+    def update(self):
+        pass
+
 class Invader(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         super().__init__()
@@ -29,9 +41,10 @@ class Brickinvaders:
 
         # Spaceship movement variables
         self.spaceship_velocity = 0
-        self.spaceship_acceleration = 0.5
-        self.spaceship_friction = 0.5
+        self.spaceship_acceleration = 0.6
+        self.spaceship_friction = 0.4
         self.spaceship_velocity_limit = 15
+        self.spaceship_counter_strafe_multiplier = 2
 
         # Spaceship angle
         self.spaceship_angle = 0
@@ -51,7 +64,7 @@ class Brickinvaders:
         self.invader_columns = 11
 
         # Calculate and scale spacing based on screen dimensions
-        self.horizontal_spacing = self.screen.get_width() // 30  # Adjusted for 1920 width
+        self.horizontal_spacing = self.screen.mget_width() // 30  # Adjusted for 1920 width
         self.vertical_spacing = self.screen.get_height() // 17  # Adjusted for 1080 height
 
         # Calculate and scale invader dimensions based on screen dimensions
@@ -73,14 +86,19 @@ class Brickinvaders:
                 y = self.invader_start_y + row * (self.invader_height + self.vertical_spacing)
                 invader = Invader(x, y, self.invader_image)
                 self.invaders.add(invader)
+
+        # Initialize bullet
+        self.bullet_width = 20
+        self.bullet_height = 20
+
+        self.bullet_image = pygame.image.load('./assets/BI_bullet.png').convert_alpha()
+        self.bullet_image = pygame.transform.scale(self.bullet_image, (20, 20))
     
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print("Space key pressed in Brick Invaders!")
-                self.spaceship.fill((0, 255, 0)) 
+                pass
             if event.key == pygame.K_ESCAPE:
-                print("Escape key pressed in Brick Invaders! Returning to menu...")
                 self.running = False
                 self.glb.return_to_menu = True  # Signal to return to menu
 
@@ -90,16 +108,15 @@ class Brickinvaders:
         move_left = keys[pygame.K_a] or keys[pygame.K_LEFT]
         move_right = keys[pygame.K_d] or keys[pygame.K_RIGHT]
 
-        counter_strafe_multiplier = 2
-
+    
         if move_left:
             if self.spaceship_velocity > 0:
-                self.spaceship_velocity -= self.spaceship_acceleration * counter_strafe_multiplier
+                self.spaceship_velocity -= self.spaceship_acceleration * self.spaceship_counter_strafe_multiplier
             else:
                 self.spaceship_velocity -= self.spaceship_acceleration
         elif move_right:
             if self.spaceship_velocity < 0:
-                self.spaceship_velocity += self.spaceship_acceleration * counter_strafe_multiplier
+                self.spaceship_velocity += self.spaceship_acceleration * self.spaceship_counter_strafe_multiplier
             else:
                 self.spaceship_velocity += self.spaceship_acceleration
         else:
@@ -121,17 +138,15 @@ class Brickinvaders:
             self.spaceship_velocity = 0
 
         self.spaceship_angle = (self.spaceship_velocity // 5) * self.spaceship_angle_increment * -1
-        
-    
+  
     def update(self):
         
         # move spaceship
         self.update_spaceship_position()
+
         # background
-        
         #self.screen.blit(self.background, (0, -1 * self.background_height + self.scroll))
         self.screen.blit(self.background, (0, 0 * self.background_height + self.scroll))
-
         #self.scroll = (self.scroll + 5) % self.background_height
 
 
@@ -145,5 +160,4 @@ class Brickinvaders:
 
         # draw spaceship
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
-
         pygame.display.flip()
