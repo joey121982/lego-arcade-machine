@@ -1,5 +1,9 @@
 # Changelog:
 
+## versiune 0.0.5
+- am inceput brick-fighters
+- am adaugat un script automat de rulare/instalare/dezinstalare proiect (```lego-arcade-machine/Makefile```)
+
 ## versiune 0.0.4
 - am dat merge cu branchul de brick-invaders (28.05.2025) la main
 
