@@ -18,9 +18,9 @@
 
 ## script automat
 Din folderul principal ruleaza:
-``` make run ``` - instaleaza si ruleaza proiectul
-``` make install ``` - doar instaleaza
-``` make uninstall ``` - dezinstaleaza
+* ``` make run ``` - instaleaza si ruleaza proiectul
+* ``` make install ``` - doar instaleaza
+* ``` make uninstall ``` - dezinstaleaza
 
 ----
 
