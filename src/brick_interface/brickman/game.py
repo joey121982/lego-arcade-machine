@@ -5,4 +5,4 @@ class Brickman:
     running = True
     
     def update(self):
-        print("BRICKMAN!!!")
+        pass
