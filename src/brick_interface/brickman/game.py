@@ -9,12 +9,16 @@ class Player:
         self.y = y
 
     def render(self, screen, tilesize):
-        pass
+        color = (255,0,0)
+        pygame.draw.rect(screen, color, pygame.Rect(self.x*tilesize, self.y*tilesize, tilesize, tilesize))
          
         
 class Map:
     def __init__(self):
+        self.width = 10
+        self.height = 10
         self.maze = [
+            [0,1,0,0,0,1,1,0,0,1],
             [0,1,0,0,0,1,1,0,0,1],
             [0,1,0,0,0,1,1,0,0,1],
             [0,1,0,0,0,1,1,0,0,1],
@@ -26,6 +30,14 @@ class Map:
             [0,1,0,0,0,1,1,0,0,1]
         ]
         self.player_start = [3,3]
+
+    def render(self, screen, tilesize):
+        space = (10,10,10)
+        wall = (200,200,200)
+        for j in range(0, self.height):
+            for i in range(0, self.width):
+                color = wall if self.maze[i][j] else space 
+                pygame.draw.rect(screen, color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
 
 
 
@@ -41,7 +53,14 @@ class Brickman:
         self.screen = screen
         self.globals = globals
         self.map = Map()
-        self.player = Player(map.player_start[0], map.player_start[1])
+        self.player = Player(self.map.player_start[0], self.map.player_start[1])
+        self.tilesize = self.globals.WINHEIGHT//self.map.height
+
+    def render(self):
+        self.screen.fill((0,0,0))
+        self.map.render(self.screen, self.tilesize)
+        self.player.render(self.screen, self.tilesize)
+        pygame.display.update()
 
     def controls(self):
         keys=pygame.key.get_pressed()
@@ -63,4 +82,4 @@ class Brickman:
             self.direction = "right"
 
     def update(self):
-        pass
+        self.render()
