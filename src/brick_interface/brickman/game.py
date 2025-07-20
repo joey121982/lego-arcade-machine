@@ -1,48 +1,7 @@
 import pygame
-
-class Player:
-    x = 0
-    y = 0
-
-    def __init__(self, x = 0, y = 0):
-        self.x = x
-        self.y = y
-
-    def render(self, screen, tilesize):
-        color = (255,0,0)
-        pygame.draw.rect(screen, color, pygame.Rect(self.x*tilesize, self.y*tilesize, tilesize, tilesize))
-         
-        
-class Map:
-    def __init__(self):
-        self.width = 10
-        self.height = 10
-        self.maze = [
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1],
-            [0,1,0,0,0,1,1,0,0,1]
-        ]
-        self.player_start = [3,3]
-
-    def render(self, screen, tilesize):
-        space = (10,10,10)
-        wall = (200,200,200)
-        for j in range(0, self.height):
-            for i in range(0, self.width):
-                color = wall if self.maze[i][j] else space 
-                pygame.draw.rect(screen, color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
-
-
-
-
-
+import json
+from .map import *
+from .player import *
 
 class Brickman:
     name = "BrickMan"
