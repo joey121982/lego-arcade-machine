@@ -6,7 +6,6 @@ from .player import *
 class Brickman:
     name = "BrickMan"
     running = True
-    direction = "none"
     
     def __init__(self, screen, globals):
         self.screen = screen
@@ -21,24 +20,8 @@ class Brickman:
         self.player.render(self.screen, self.tilesize)
         pygame.display.update()
 
-    def controls(self):
-        keys=pygame.key.get_pressed()
-
-        state = {
-            "w":keys[pygame.K_w],
-            "s":keys[pygame.K_s],
-            "a":keys[pygame.K_a],
-            "d":keys[pygame.K_d]
-        }
-
-        if state["w"]:
-            self.direction = "up"
-        elif state["s"]:
-            self.direction = "down"
-        elif state["a"]:
-            self.direction = "left"
-        elif state["d"]:
-            self.direction = "right"
+   
 
     def update(self):
         self.render()
+        self.player.update(self.map)

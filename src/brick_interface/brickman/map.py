@@ -4,8 +4,8 @@ import pygame
 
 class Map:
     def __init__(self):
-        self.width = 10
-        self.height = 10
+        self.width = 16
+        self.height = 9
         self.maze = [[0 for _ in range(self.width)] for _ in range(self.height)]
         with open("./assets/test.json", "r") as file:
             data = json.load(file)
@@ -22,6 +22,7 @@ class Map:
         wall = (200,200,200)
         for i in range(0, self.height):
             for j in range(0, self.width):
+                # 0 = punct    1 = perete     2 = fruct  -1 = spatiu 
                 color = wall if self.maze[i][j] == 1 else space 
                 pygame.draw.rect(screen, color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
 
