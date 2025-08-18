@@ -1,5 +1,13 @@
 # Changelog:
 
+## versiune 0.0.6
+- merging updates from brickman branch:
+#### brickman
+- map loading via json-format files
+(TODO: build a map generator tool)
+- player, map rendering
+- working player movement with buffered mechanics
+
 ## versiune 0.0.5
 - am inceput brick-fighters
 - am adaugat un script automat de rulare/instalare/dezinstalare proiect (```lego-arcade-machine/Makefile```)
@@ -11,7 +19,7 @@
 - implementat nava, entitati de "invaders"
 - controale de miscat nava
 - nava se roteste dupa valoarea acceleratiei
-* todo: asseturi pentru joc cat mai curand
+(TODO: asseturi pentru joc cat mai curand)
 
 ## versiune 0.0.3
 - meniul principal are acum controale de selectat jocul

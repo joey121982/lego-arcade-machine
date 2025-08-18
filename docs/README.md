@@ -1,6 +1,6 @@
 # BrickBox
 
-### versiune 0.0.5
+### versiune 0.0.6, last updated 18.08.2025
 
 ----
 
@@ -11,7 +11,7 @@
 ## pre-rechizite
 * pip & pipx
 * python ^3.10
-* pygame (instalat prin pipx astfel: ```pipx install pygame``` in folderul ```src/```)
+* pygame (instalat prin pipx astfel: ```pipx install pygame```)
 * make (doar pentru script-ul automat)
 
 ----
