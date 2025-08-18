@@ -12,13 +12,6 @@ from .brickinvaders.game import *
 from .brickman.game import *
 from .brickfighter.game import *
 
-# --- info
-# "|" este operatorul bitwise or si aici doar creaza un "union" type de mai multe type-uri
-# un union este un tip de data care spune ca obiectul poate fi mai de mai multe forme
-# de ex boolint x = 10; boolint x = false;
-#               ^ int           ^ boolean
-# in cazul asta boolint este un union de "bool | int"
-# --- joey
 GameType = Brickjump | Brickinvaders | Brickfighter | Brickman | Menu | None
 
 class Shell:

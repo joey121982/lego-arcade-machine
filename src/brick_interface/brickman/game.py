@@ -1,5 +1,4 @@
 import pygame
-import json
 from .map import *
 from .player import *
 
@@ -18,9 +17,16 @@ class Brickman:
         self.screen.fill((0,0,0))
         self.map.render(self.screen, self.tilesize)
         self.player.render(self.screen, self.tilesize)
-        pygame.display.update()
 
-   
+        if self.globals.DEBUG_MODE == True:
+            # draw debug data to screen
+            font = pygame.font.SysFont(None, 24)
+            coord_text = f"DEBUG:   X: {self.player.x:.2f} | Y: {self.player.y:.2f} | DIR: {self.player.direction}"
+            text_surface = font.render(coord_text, True, (255, 0, 0))
+            screen_rect = pygame.display.get_surface().get_rect()
+            self.screen.blit(text_surface, (10, screen_rect.height - 30))
+
+        pygame.display.update()
 
     def update(self):
         self.render()
