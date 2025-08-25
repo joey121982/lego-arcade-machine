@@ -44,7 +44,7 @@ class Player:
         elif state["d"]:
             self.next_direction = "right"
 
-    def update(self, map):
+    def update(self, map, super):
         # --- TODO
         # rewrite to reduce code, specifically in the collision checks
         # also, currently in the case of successfully changing direction mid-movement,
@@ -120,4 +120,15 @@ class Player:
             self.direction = "none"
         if self.direction == "none" and self.next_direction != "none":
             self.direction = self.next_direction
-        
+       
+        if (self.x == int(self.x) and self.y == int(self.y)):
+            point_score = 5 
+            fruit_score = 20
+
+            if map.maze[int(self.y)][int(self.x)] == 0:
+                super.score += point_score
+                map.maze[int(self.y)][int(self.x)] = -1
+
+            if map.maze[int(self.y)][int(self.x)] == 2:
+                super.score += fruit_score
+                map.maze[int(self.y)][int(self.x)] = -1
