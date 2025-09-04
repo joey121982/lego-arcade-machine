@@ -1,5 +1,12 @@
 import pygame
 import math
+from .constants import (
+    SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT,
+    SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT,
+    BULLET_SPEED, BULLET_WIDTH, BULLET_HEIGHT, BULLET_COLOR,
+    INVADER_ROWS, INVADER_COLUMNS, INVADER_START_X, INVADER_START_Y, INVADER_SPEED,
+    COLOR_RED, COLOR_YELLOW, COLOR_WHITE, LEVELS
+)
 
 class Bullet (pygame.sprite.Sprite):
     def __init__(self, x, y, image, speed, angle, color):
@@ -28,12 +35,25 @@ class Invader(pygame.sprite.Sprite):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
-        self.speed = 2
     
     def update(self):
         pass
 
 class Brickinvaders:
+    def setup_level(self, level_data):
+        self.invaders.empty()
+        rows = level_data["rows"]
+        columns = level_data["columns"]
+        speed = level_data["invader_speed"]
+        pattern = level_data.get("pattern", "default")
+        # You can expand pattern logic here if needed
+        for row in range(rows):
+            for col in range(columns):
+                x = INVADER_START_X + col * (self.invader_width + self.horizontal_spacing)
+                y = INVADER_START_Y + row * (self.invader_height + self.vertical_spacing)
+                invader = Invader(x, y, self.invader_image)
+                invader.speed = speed
+                self.invaders.add(invader)
     name = "Brick Invaders"
     running = True
     
@@ -45,22 +65,17 @@ class Brickinvaders:
         # -- Spaceship Setup --
         # Initialize spaceship
         self.spaceship = pygame.Surface((100, 100), pygame.SRCALPHA)
-        pygame.draw.polygon(self.spaceship, (255, 0, 0), [(50, 0), (100, 100), (0, 100)])
+        pygame.draw.polygon(self.spaceship, COLOR_RED, [(50, 0), (100, 100), (0, 100)])
 
         self.spaceship_x = self.screen.get_width() // 2 - 50
         self.spaceship_y = self.screen.get_height() - 250
 
         # Spaceship movement variables
         self.spaceship_velocity = 0
-        self.spaceship_acceleration = 0.6
-        self.spaceship_friction = 0.4
-        self.spaceship_velocity_limit = 15
-        self.spaceship_counter_strafe_multiplier = 2
 
         # Spaceship angle
         self.spaceship_angle = 0
         self.spaceship_angle_sign = 0
-        self.spaceship_angle_increment = 5
 
         # -- Background Setup --
         # Background things
@@ -71,9 +86,8 @@ class Brickinvaders:
         self.scroll = 0  # Initialize scroll outside the update method
 
         # -- Enemy Setup --
-        # Grid
-        self.invader_rows = 5
-        self.invader_columns = 11
+        # Level Index
+        self.level_index = 0
 
         # Calculate and scale spacing based on screen dimensions
         self.horizontal_spacing = self.screen.get_width() // 30  # Adjusted for 1920 width
@@ -83,30 +97,18 @@ class Brickinvaders:
         self.invader_width = self.screen.get_width() // 25  # Adjusted for 1920 width
         self.invader_height = self.screen.get_height() // 17  # Adjusted for 1080 height
 
-        # Start position of the grid
-        self.invader_start_x = 200
-        self.invader_start_y = 50
-
         # Load invader image and scale it
         self.invader_image = pygame.image.load('./assets/BI_invader.png').convert_alpha()
         self.invader_image = pygame.transform.scale(self.invader_image, (self.invader_width, self.invader_height))
 
         self.invaders = pygame.sprite.Group()
-        for row in range(self.invader_rows):
-            for col in range(self.invader_columns):
-                x = self.invader_start_x + col * (self.invader_width + self.horizontal_spacing)
-                y = self.invader_start_y + row * (self.invader_height + self.vertical_spacing)
-                invader = Invader(x, y, self.invader_image)
-                self.invaders.add(invader)
-        
+        self.setup_level(LEVELS[self.level_index])
+
         # -- Bullet Setup --
         # Initialize bullet
-        self.bullet_speed = 5
-        self.bullet_width = 20
-        self.bullet_height = 20
-
+        self.bullet_speed = BULLET_SPEED
         self.bullet_image = pygame.image.load('./assets/BI_bullet.png').convert_alpha()
-        self.bullet_image = pygame.transform.scale(self.bullet_image, (20, 20))
+        self.bullet_image = pygame.transform.scale(self.bullet_image, (BULLET_WIDTH, BULLET_HEIGHT))
 
         self.bullets = pygame.sprite.Group()
     
@@ -133,24 +135,24 @@ class Brickinvaders:
     
         if move_left:
             if self.spaceship_velocity > 0:
-                self.spaceship_velocity -= self.spaceship_acceleration * self.spaceship_counter_strafe_multiplier
+                self.spaceship_velocity -= SPACESHIP_ACCELERATION * SPACESHIP_COUNTER_STRAFE_MULTIPLIER 
             else:
-                self.spaceship_velocity -= self.spaceship_acceleration
+                self.spaceship_velocity -= SPACESHIP_ACCELERATION   
         elif move_right:
             if self.spaceship_velocity < 0:
-                self.spaceship_velocity += self.spaceship_acceleration * self.spaceship_counter_strafe_multiplier
+                self.spaceship_velocity += SPACESHIP_ACCELERATION * SPACESHIP_COUNTER_STRAFE_MULTIPLIER
             else:
-                self.spaceship_velocity += self.spaceship_acceleration
+                self.spaceship_velocity += SPACESHIP_ACCELERATION
         else:
             # No input = normal friction
             if self.spaceship_velocity > 0:
-                self.spaceship_velocity -= self.spaceship_friction
+                self.spaceship_velocity -= SPACESHIP_FRICTION
                 self.spaceship_velocity = max(self.spaceship_velocity, 0)
             elif self.spaceship_velocity < 0:
-                self.spaceship_velocity += self.spaceship_friction
+                self.spaceship_velocity += SPACESHIP_FRICTION
                 self.spaceship_velocity = min(self.spaceship_velocity, 0)
 
-        self.spaceship_velocity = max(-self.spaceship_velocity_limit, min(self.spaceship_velocity, self.spaceship_velocity_limit))
+        self.spaceship_velocity = max(-SPACESHIP_VELOCITY_LIMIT, min(self.spaceship_velocity, SPACESHIP_VELOCITY_LIMIT))
         self.spaceship_x += self.spaceship_velocity
         if self.spaceship_x < 50:
             self.spaceship_x = 50
@@ -159,18 +161,25 @@ class Brickinvaders:
             self.spaceship_x = self.screen.get_width() - 150
             self.spaceship_velocity = 0
 
-        self.spaceship_angle = (self.spaceship_velocity // 5) * self.spaceship_angle_increment * -1
+        self.spaceship_angle = (self.spaceship_velocity // 5) * SPACESHIP_ANGLE_INCREMENT * -1
   
     def update(self):
-        
         # move spaceship
         self.update_spaceship_position()
 
         # background
-        #self.screen.blit(self.background, (0, -1 * self.background_height + self.scroll))
         self.screen.blit(self.background, (0, 0 * self.background_height + self.scroll))
-        #self.scroll = (self.scroll + 5) % self.background_height
 
+        # Check for level completion
+        if len(self.invaders) == 0:
+            self.level_index += 1
+            if self.level_index < len(LEVELS):
+                self.setup_level(LEVELS[self.level_index])
+            else:
+                # Game completed, show win screen or restart
+                print("You win!")
+                self.running = False
+                return
 
         # Update and draw invaders
         self.invaders.update()
