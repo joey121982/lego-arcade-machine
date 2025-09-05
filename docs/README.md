@@ -1,6 +1,6 @@
 # BrickBox
 
-### versiune 0.0.6, last updated 18.08.2025
+### versiune 0.1.0, last updated 05.09.2025
 
 ----
 
@@ -43,6 +43,15 @@ Asadar, poate fi rulat din ```src/``` astfel:
 ```sh
 brick-interface
 ```
+
+----
+
+# External Credits:
+
+Brickman Map Generator:
+* Niels Lohmann - json.hpp https://github.com/nlohmann/json
+* OpenGL3, GLFW - https://www.opengl.org/ & https://www.glfw.org/
+* ImGui - https://github.com/ocornut/imgui
 
 ----
 
