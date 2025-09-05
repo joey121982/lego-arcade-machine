@@ -1,5 +1,12 @@
 import pygame
 import math
+from .constants import (
+    SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT,
+    SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT,
+    BULLET_SPEED, BULLET_WIDTH, BULLET_HEIGHT, BULLET_COLOR,
+    INVADER_ROWS, INVADER_COLUMNS, INVADER_START_X, INVADER_START_Y, INVADER_SPEED,
+    COLOR_RED, COLOR_YELLOW, COLOR_WHITE, LEVELS, INVADER_DOWN
+)
 
 class Bullet (pygame.sprite.Sprite):
     def __init__(self, x, y, image, speed, angle, color):
@@ -28,14 +35,31 @@ class Invader(pygame.sprite.Sprite):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
-        self.speed = 2
-    
-    def update(self):
-        pass
+
+    def update(self, global_direction):
+        if global_direction % 2 == 1:
+            self.rect.x += INVADER_SPEED * 1
+        else:
+            self.rect.x += INVADER_SPEED * -1
 
 class Brickinvaders:
     name = "Brick Invaders"
     running = True
+    
+    def setup_level(self, level_data):
+        self.invaders.empty()
+        rows = level_data["rows"]
+        columns = level_data["columns"]
+        speed = level_data["invader_speed"]
+        pattern = level_data.get("pattern", "default")
+        # You can expand pattern logic here if needed
+        for row in range(rows):
+            for col in range(columns):
+                x = INVADER_START_X + col * (self.invader_width + self.horizontal_spacing)
+                y = INVADER_START_Y + row * (self.invader_height + self.vertical_spacing)
+                invader = Invader(x, y, self.invader_image)
+                invader.speed = speed
+                self.invaders.add(invader)
     
     def __init__(self, screen, glb):
         self.running = True
@@ -92,13 +116,9 @@ class Brickinvaders:
         self.invader_image = pygame.transform.scale(self.invader_image, (self.invader_width, self.invader_height))
 
         self.invaders = pygame.sprite.Group()
-        for row in range(self.invader_rows):
-            for col in range(self.invader_columns):
-                x = self.invader_start_x + col * (self.invader_width + self.horizontal_spacing)
-                y = self.invader_start_y + row * (self.invader_height + self.vertical_spacing)
-                invader = Invader(x, y, self.invader_image)
-                self.invaders.add(invader)
-        
+        self.setup_level(LEVELS[self.level_index])
+        self.invader_direction = 1
+
         # -- Bullet Setup --
         # Initialize bullet
         self.bullet_speed = 5
@@ -159,8 +179,26 @@ class Brickinvaders:
             self.spaceship_x = self.screen.get_width() - 150
             self.spaceship_velocity = 0
 
-        self.spaceship_angle = (self.spaceship_velocity // 5) * self.spaceship_angle_increment * -1
-  
+        self.spaceship_angle = (self.spaceship_velocity // 5) * SPACESHIP_ANGLE_INCREMENT * -1
+        
+    def check_bullet_invader_collisions(self):
+        for bullet in self.bullets:
+            if pygame.sprite.spritecollideany(bullet, self.invaders):
+                collided_invader = pygame.sprite.spritecollideany(bullet, self.invaders)
+                bullet.kill()
+                collided_invader.kill()
+                # Play explosion sound or show explosion animation
+                # explosion_sound = pygame.mixer.Sound('./assets/explosion.wav')
+                # explosion_sound.play()
+    
+    def check_invader_spaceship_collisions(self):
+        for invader in self.invaders:
+            if invader.rect.colliderect(pygame.Rect(self.spaceship_x, self.spaceship_y, 100, 100)):
+                # Handle collision (e.g., end game or reduce life)
+                self.running = False
+                print("Game Over! An invader hit your spaceship.")
+                break
+
     def update(self):
         
         # move spaceship
@@ -173,11 +211,21 @@ class Brickinvaders:
 
 
         # Update and draw invaders
-        self.invaders.update()
+        for invader in self.invaders:
+            if invader.rect.x < invader.image.get_width() // 2 or invader.rect.x > 1920 - invader.image.get_width() * 2:
+                self.invader_direction += 1
+                for invader in self.invaders:
+                    invader.rect.y += self.invader_direction * invader.image.get_height() // 2
+                break
+        self.invaders.update(self.invader_direction)
         self.invaders.draw(self.screen)
 
         self.bullets.update()
         self.bullets.draw(self.screen)
+
+        # Collisions
+        self.check_bullet_invader_collisions()
+        self.check_invader_spaceship_collisions()
 
         # rotate spaceship logic
         rotated_spaceship = pygame.transform.rotozoom(self.spaceship, self.spaceship_angle, 1)
