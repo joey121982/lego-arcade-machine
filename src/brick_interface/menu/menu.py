@@ -11,7 +11,7 @@ class Menu:
     def __init__(self, new_screen, new_globals):
         self.screen = new_screen
         self.glb = new_globals
-        self.background = pygame.image.load("./assets/bg.png")
+        self.background = pygame.image.load("./assets/images/bg.png")
         self.background = pygame.transform.scale(self.background, (self.glb.WINWIDTH, self.glb.WINHEIGHT))
 
     def controls(self):
