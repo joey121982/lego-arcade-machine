@@ -1,5 +1,9 @@
 # Changelog:
 
+## versiune 0.1.0
+- removed ```guide.md``` from ```docs```
+- added brickman map generator "bmmgen"
+
 ## versiune 0.0.6
 - merging updates from brickman branch:
 #### brickman
