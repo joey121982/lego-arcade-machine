@@ -1,0 +1,3 @@
+[submodule "external_tools/brickman-mapgen/imgui"]
+	path = external_tools/brickman-mapgen/imgui
+	url = https://github.com/ocornut/imgui.git
