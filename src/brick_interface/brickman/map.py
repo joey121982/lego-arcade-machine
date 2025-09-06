@@ -6,7 +6,7 @@ class Map:
         self.width = 16
         self.height = 9
         self.maze = [[0 for _ in range(self.width)] for _ in range(self.height)]
-        with open("./assets/map1.json", "r") as file:
+        with open("./assets/brickman-maps/map2.json", "r") as file:
             data = json.load(file)
             file.close()
         for i, row in enumerate(data["maze"]):
