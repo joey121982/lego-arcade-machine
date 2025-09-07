@@ -128,7 +128,9 @@ class Player:
             if map.maze[int(self.y)][int(self.x)] == 0:
                 super.score += point_score
                 map.maze[int(self.y)][int(self.x)] = -1
+                map.points -= 1
 
             if map.maze[int(self.y)][int(self.x)] == 2:
                 super.score += fruit_score
                 map.maze[int(self.y)][int(self.x)] = -1
+                map.points -= 1

@@ -5,13 +5,21 @@ class Map:
     def __init__(self):
         self.width = 16
         self.height = 9
+        self.points = 0 # map.points counts the amount of tiles with aquirable points left, including fruits.
+        self.level = 1 # current map number (starts at 1 for map1.json)
+        self.load()
+
+    def load(self):
+        map_name = "map" + str(self.level)
         self.maze = [[0 for _ in range(self.width)] for _ in range(self.height)]
-        with open("./assets/brickman-maps/map2.json", "r") as file:
+        with open("./assets/brickman-maps/" + map_name + ".json", "r") as file:
             data = json.load(file)
             file.close()
         for i, row in enumerate(data["maze"]):
             for j, el in enumerate(row):
                 self.maze[i][j] = int(el)
+                if int(el) == 0 or int(el) == 2:
+                    self.points += 1
         self.player_start = data["player_start"]
 
     def render(self, screen, tilesize):
