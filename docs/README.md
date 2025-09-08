@@ -1,45 +1,45 @@
 # BrickBox
 
-### versiune 0.1.0, last updated 05.09.2025
+### version 0.1.0, last updated 05.09.2025
 
 ----
 
-## atentie: proiectul este scris in python 3.10+, versiuni mai vechi nu o sa mearga
+## Attention: This project was written using Python 3.10+, older versions will NOT work.
 
 ----
 
-## pre-rechizite
+## Prerequisites
 * pip & pipx
 * python ^3.10
-* pygame (instalat prin pipx astfel: ```pipx install pygame```)
-* make (doar pentru script-ul automat)
+* pygame (installed through pipx: ```pipx install pygame```)
+* make (for the automated Makefile)
 
 ----
 
-## script automat
-Din folderul principal ruleaza:
-* ``` make run ``` - instaleaza si ruleaza proiectul
-* ``` make install ``` - doar instaleaza
-* ``` make uninstall ``` - dezinstaleaza
+## Script
+From the project root:
+* ``` make run ``` - install and run
+* ``` make install ``` - install only
+* ``` make uninstall ``` - uninstall project
 
 ----
 
-## install
-Din folderul ```src/``` ruleaza:
-* mod editabil (recomandat)
+## Manual Installation
+From ```src/``` run:
+* editable mode (recommended)
 ```sh
 pipx install -e .
 ```
-* mod normal
+* normal mode
 ```sh
 pipx install .
 ```
 
 ----
 
-## rulare
-Dupa instalare, programul o sa fie instalat in PATH direct de ```pipx```, fara sa fie nevoie de etape in plus.
-Asadar, poate fi rulat din ```src/``` astfel:
+## Running
+After installation, the project will be added to PATH by pipx automatically, no further steps are required.
+The project can be run from the terminal:
 ```sh
 brick-interface
 ```

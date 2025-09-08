@@ -18,7 +18,6 @@
 const int winwidth = 985;
 const int winheight = 690;
 
-
 const int rows = 9;
 const int cols = 16;
 std::vector<std::vector<int>> maze(rows, std::vector<int>(cols, 0));

@@ -19,9 +19,9 @@ class Brickman:
 
     def display_score (self):
         font = pygame.font.SysFont(None, 24)
+        
         score_text = f"{self.score}"
         text_surface = font.render(score_text, True, (255, 0, 0))
-        screen_rect = pygame.display.get_surface().get_rect()
         self.screen.blit(text_surface, (self.globals.WINWIDTH/2 - 40, self.tilesize/3))
 
         time_text = f"{int(self.time)}"
