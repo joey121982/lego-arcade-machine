@@ -1,227 +1,58 @@
 import pygame
 import math
+from .utilities import *
 from .constants import *
-
-class Bullet (pygame.sprite.Sprite):
-    def __init__(self, x, y, image, speed, angle, color):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(center=(x, y))
-        self.speed = speed
-        self.angle = angle
-        self.color = color
-
-        rad_angle = math.radians(self.angle)
-        self.dx = self.speed * math.cos(rad_angle)
-        self.dy = self.speed * math.sin(rad_angle)
-
-    def update(self):
-        self.rect.x += self.dx
-        self.rect.y += self.dy
-
-        # Check if the bullet is off-screen
-        if self.rect.x < 0 or self.rect.x > pygame.display.get_surface().get_width() or \
-              self.rect.y < 0 or self.rect.y > pygame.display.get_surface().get_height():
-                self.kill()
-
-class Invader(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, speed):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(center=(x, y))
-        self.actual_x = x
-        self.speed = speed
-
-    def update(self, global_direction):
-        if global_direction % 2 == 1:
-            self.actual_x += self.speed * 1 # This represents the actual live x position of the invader
-            if self.actual_x - self.rect.x > self.rect.width:
-                self.rect.x = self.actual_x # We move the rect only when the difference is significant to add the clasic effect of the original invader game
-        else:
-            self.actual_x += self.speed * -1
-            if self.rect.x - self.actual_x > self.rect.width:
-                self.rect.x = self.actual_x
-        
+from .bullet import Bullet
+from .invader import Invader
+from .spaceship import Spaceship
 
 class Brickinvaders:
     name = "Brick Invaders"
     running = True
-    
-    def setup_level(self, level_data):
-        self.invaders.empty()
-        rows = level_data["rows"]
-        columns = level_data["columns"]
-        speed = level_data["invader_speed"]
-        pattern = level_data.get("pattern", "default")
-        # You can expand pattern logic here if needed
-        
-        horizontal_spacing  = (SCREEN_WIDTH - columns * (self.invader_width * 2)) // 2 + self.invader_width
-        vertical_spacing = self.invader_height
-        if pattern == "default":
-            for row in range(rows):
-                for col in range(columns):
-                    x = horizontal_spacing + col * (self.invader_width * 2)
-                    y = vertical_spacing + row * (self.invader_height * 2)
-                    invader = Invader(x, y, self.invader_image, speed)
-                    self.invaders.add(invader)
-        elif pattern == "zigzag":
-            for row in range(rows):
-                for col in range(columns):
-                    x = horizontal_spacing + col * (self.invader_width * 2) + (row % 2) * self.invader_width
-                    y = vertical_spacing + row * (self.invader_height * 2)
-                    invader = Invader(x, y, self.invader_image, speed)
-                    self.invaders.add(invader)
-        elif pattern == "dense":
-            for row in range(rows):
-                for col in range(columns):
-                    x = horizontal_spacing + col * (self.invader_width * 1.5)
-                    y = vertical_spacing + row * (self.invader_height * 1.5)
-                    invader = Invader(x, y, self.invader_image, speed)
-                    self.invaders.add(invader)
-        elif pattern == "semicircle":
-            for row in range(rows):
-                for col in range(columns):
-                    if col == 0 or col == columns - 1 or row == 0:
-                        x = horizontal_spacing + col * (self.invader_width * 2)
-                        y = vertical_spacing + row * (self.invader_height * 2)
-                        invader = Invader(x, y, self.invader_image, speed)
-                        self.invaders.add(invader)
 
     def __init__(self, screen, glb):
         self.running = True
         self.screen = screen
         self.glb = glb
+        self.bullet_image, self.invader_image, self.planets = load_images()
 
         # -- Spaceship Setup --
         # Initialize spaceship
-        self.spaceship = pygame.Surface((100, 100), pygame.SRCALPHA)
-        pygame.draw.polygon(self.spaceship, (255, 0, 0), [(50, 0), (100, 100), (0, 100)])
-
-        self.spaceship_x = self.screen.get_width() // 2 - 50
-        self.spaceship_y = self.screen.get_height() - 250
-
-        # Spaceship movement variables
-        self.spaceship_velocity = 0
-
-        # Spaceship angle
-        self.spaceship_angle = 0
-        self.spaceship_angle_sign = 0
+        spaceship_x = SCREEN_WIDTH // 2 - 50
+        spaceship_y = SCREEN_HEIGHT - 250
+        self.spaceship = Spaceship(spaceship_x, spaceship_y, None, SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
+        pygame.draw.polygon(self.spaceship.rect, (255, 0, 0), [(50, 0), (100, 100), (0, 100)])
 
         # -- Background Setup --
-        # Background things
-        self.background = pygame.image.load('./assets/images/BI_background.png').convert()
-        self.background = pygame.transform.scale(self.background, (self.glb.WINWIDTH, self.glb.WINHEIGHT))
+        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/BI_background.png').convert(), (self.glb.WINWIDTH, self.glb.WINHEIGHT))
         self.background_width = self.background.get_width()
         self.background_height = self.background.get_height()
-        
-        # Load multiple planet images into an array
-        self.planets = [
-            pygame.image.load('./assets/images/BI_planet1.png').convert_alpha(),
-            pygame.image.load('./assets/images/BI_planet2.png').convert_alpha(),
-            pygame.image.load('./assets/images/BI_planet3.png').convert_alpha()
-        ]
 
+        # -- Planet Images --
         self.current_planet = self.planets[0]
-        #self.planet1 = pygame.transform.scale(self.planet1, (self.glb.WINWIDTH, self.glb.WINHEIGHT))
-
-        # -- Enemy Setup --
-        # Grid
-
-        # Calculate and scale spacing based on screen dimensions
-
-        # Calculate and scale invader dimensions based on screen dimensions
-        self.invader_width = self.screen.get_width() // 25  # Adjusted for 1920 width
-        self.invader_height = self.screen.get_height() // 17  # Adjusted for 1080 height
-
-        # Start position of the grid
-
-        # Load invader image and scale it
-        self.invader_image = pygame.image.load('./assets/images/BI_invader.png').convert_alpha()
-        self.invader_image = pygame.transform.scale(self.invader_image, (self.invader_width, self.invader_height))
-
+        
+        # -- Sprite Groups --
         self.invaders = pygame.sprite.Group()
-        self.level_index = 0
-        self.setup_level(LEVELS[self.level_index])
-        self.invader_direction = 1
-
-        # -- Bullet Setup --
-        # Initialize bullet
-
-        self.bullet_image = pygame.image.load('./assets/images/BI_bullet.png').convert_alpha()
-        self.bullet_image = pygame.transform.scale(self.bullet_image, (BULLET_WIDTH, BULLET_HEIGHT))
-
         self.bullets = pygame.sprite.Group()
-    
+        
+        self.level_index = 0
+        setup_level(self, LEVELS[self.level_index])
+        self.global_direction = 1
+
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and len(self.bullets) < 3:
                 # Shoot bullet
-                bullet_x = self.spaceship_x + 50  # Center of the spaceship
-                bullet_y = self.spaceship_y  # Center of the spaceship
-                bullet_angle = -self.spaceship_angle + 270 # Adjust angle to point downwards
+                bullet_x = self.spaceship.x + 50  # Center of the spaceship
+                bullet_y = self.spaceship.y  # Center of the spaceship
+                bullet_angle = -self.spaceship.angle + 270 # Adjust angle to point downwards
                 bullet = Bullet(bullet_x, bullet_y, self.bullet_image, speed=BULLET_SPEED, angle=bullet_angle, color=(255, 255, 0))
                 self.bullets.add(bullet)
 
             if event.key == pygame.K_ESCAPE:
                 self.running = False
                 self.glb.return_to_menu = True  # Signal to return to menu
-
-    def update_spaceship_position(self):
-        keys = pygame.key.get_pressed()
-
-        move_left = keys[pygame.K_a] or keys[pygame.K_LEFT]
-        move_right = keys[pygame.K_d] or keys[pygame.K_RIGHT]
-
-    
-        if move_left:
-            if self.spaceship_velocity > 0:
-                self.spaceship_velocity -= SPACESHIP_ACCELERATION * SPACESHIP_COUNTER_STRAFE_MULTIPLIER
-            else:
-                self.spaceship_velocity -= SPACESHIP_ACCELERATION
-        elif move_right:
-            if self.spaceship_velocity < 0:
-                self.spaceship_velocity += SPACESHIP_ACCELERATION * SPACESHIP_COUNTER_STRAFE_MULTIPLIER
-            else:
-                self.spaceship_velocity += SPACESHIP_ACCELERATION
-        else:
-            # No input = normal friction
-            if self.spaceship_velocity > 0:
-                self.spaceship_velocity -= SPACESHIP_FRICTION
-                self.spaceship_velocity = max(self.spaceship_velocity, 0)
-            elif self.spaceship_velocity < 0:
-                self.spaceship_velocity += SPACESHIP_FRICTION
-                self.spaceship_velocity = min(self.spaceship_velocity, 0)
-
-        self.spaceship_velocity = max(-SPACESHIP_VELOCITY_LIMIT, min(self.spaceship_velocity, SPACESHIP_VELOCITY_LIMIT))
-        self.spaceship_x += self.spaceship_velocity
-        if self.spaceship_x < 50:
-            self.spaceship_x = 50
-            self.spaceship_velocity = 0
-        elif self.spaceship_x > self.screen.get_width() - 150:
-            self.spaceship_x = self.screen.get_width() - 150
-            self.spaceship_velocity = 0
-
-        self.spaceship_angle = (self.spaceship_velocity // 5) * SPACESHIP_ANGLE_INCREMENT * -1
-        
-    def check_bullet_invader_collisions(self):
-        for bullet in self.bullets:
-            if pygame.sprite.spritecollideany(bullet, self.invaders):
-                collided_invader = pygame.sprite.spritecollideany(bullet, self.invaders)
-                bullet.kill()
-                collided_invader.kill()
-                # Play explosion sound or show explosion animation
-                # explosion_sound = pygame.mixer.Sound('./assets/images/explosion.wav')
-                # explosion_sound.play()
-    
-    def check_invader_spaceship_collisions(self):
-        for invader in self.invaders:
-            if invader.rect.colliderect(pygame.Rect(self.spaceship_x, self.spaceship_y, 100, 100)):
-                # Handle collision (e.g., end game or reduce life)
-                self.running = False
-                print("Game Over! An invader hit your spaceship.")
-                break
-            
-            
+  
     def animation(self):
         animation_duration = 600  # total frames
         clock = pygame.time.Clock()
@@ -259,26 +90,16 @@ class Brickinvaders:
         
 
         for frame in range(animation_duration):
-            # If it works, it works
-            # IMPROVE THE LOGIC HERE LATER
-            self.screen.blit(self.background, (0, background_scroll))
-            self.screen.blit(self.background, (0, -1 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -2 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -3 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -4 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -5 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -6 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -7 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -8 * self.background_height + background_scroll))
-            self.screen.blit(self.background, (0, -9 * self.background_height + background_scroll))
+            for i in range(0, -9, -1):
+                self.screen.blit(self.background, (0, i * self.background_height + background_scroll))
 
             # draw planet
             self.screen.blit(self.current_planet,
                             (PLANET_OFFSET_X, int(PLANET_OFFSET_Y + planet_scroll / 2.0)))
 
             # rotate spaceship logic (unchanged, but keep int rect for blit)
-            rotated_spaceship = pygame.transform.rotozoom(self.spaceship, self.spaceship_angle, 1)
-            rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship_x + 50, self.spaceship_y + 50))
+            rotated_spaceship = pygame.transform.rotozoom(self.spaceship.rect, self.spaceship.angle, 1)
+            rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
             self.screen.blit(rotated_spaceship, rotated_rect.topleft)
 
             # --- normal scrolling update for the main phases ---
@@ -348,30 +169,29 @@ class Brickinvaders:
     def update(self):
         
         # move spaceship
-        self.update_spaceship_position()
+        self.spaceship.update()
 
         # background
-        
         self.screen.blit(self.background, (0, 0 * self.background_height))
         self.screen.blit(self.current_planet, PLANET_OFFSET)
 
         # Update and draw invaders
         for invader in self.invaders:
             if invader.actual_x < invader.image.get_width() // 2 or invader.actual_x > 1920 - invader.image.get_width() * 2:
-                self.invader_direction += 1
+                self.global_direction += 1
                 for invader in self.invaders:
-                    invader.rect.y += self.invader_direction * invader.image.get_height() // 2
+                    invader.rect.y += self.global_direction * invader.image.get_height() // 2
                 break
-        self.invaders.update(self.invader_direction)
+        self.invaders.update(self.global_direction)
         self.invaders.draw(self.screen)
 
         self.bullets.update()
         self.bullets.draw(self.screen)
 
         # Collisions
-        self.check_bullet_invader_collisions()
-        self.check_invader_spaceship_collisions()
-        
+        check_bullet_invader_collisions(self)
+        check_invader_spaceship_collisions(self)
+
         if len(self.invaders) == 0:
             self.level_index += 1
             if self.level_index >= len(LEVELS):
@@ -379,12 +199,12 @@ class Brickinvaders:
                 self.running = False
             else:
                 self.animation()
-                self.setup_level(LEVELS[self.level_index])
-                self.invader_direction = 1
+                setup_level(self, LEVELS[self.level_index])
+                self.global_direction = 1
 
         # rotate spaceship logic
-        rotated_spaceship = pygame.transform.rotozoom(self.spaceship, self.spaceship_angle, 1)
-        rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship_x + 50, self.spaceship_y + 50))
+        rotated_spaceship = pygame.transform.rotozoom(self.spaceship.rect, self.spaceship.angle, 1)
+        rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
 
         # draw spaceship
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
