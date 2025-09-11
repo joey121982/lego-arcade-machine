@@ -58,3 +58,8 @@ class Spaceship(pygame.sprite.Sprite):
             self.velocity = 0
 
         self.angle = (self.velocity // 5) * self.angle_increment * -1
+    
+    def draw(self, screen):
+        rotated_spaceship = pygame.transform.rotozoom(self.rect, self.angle, 1)
+        rotated_rect = rotated_spaceship.get_rect(center=(self.x + 50, self.y + 50))
+        screen.blit(rotated_spaceship, rotated_rect.topleft)
