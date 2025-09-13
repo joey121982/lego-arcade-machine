@@ -24,11 +24,12 @@ class Brickinvaders:
         # Initialize spaceship
         spaceship_x = SCREEN_WIDTH // 2 - 50
         spaceship_y = SCREEN_HEIGHT - 250
-        self.spaceship = Spaceship(spaceship_x, spaceship_y, None, SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
-        pygame.draw.polygon(self.spaceship.rect, (255, 0, 0), [(50, 0), (100, 100), (0, 100)])
+        spaceship_spritesheet = pygame.image.load('./assets/brickinvaders/images/spaceship_spritesheet.png').convert_alpha()
+        self.spaceship = Spaceship(spaceship_x, spaceship_y, spaceship_spritesheet, SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
+        
 
         # -- Background Setup --
-        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/BI_background.png').convert(), (self.glb.WINWIDTH, self.glb.WINHEIGHT))
+        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(), (self.glb.WINWIDTH, self.glb.WINHEIGHT))
         
         # -- Sprite Groups --
         self.invaders = pygame.sprite.Group()

@@ -17,6 +17,19 @@ def planet_animation(self, spritesheet, spritesheet_index):
 
     return scaled_frame
 
+def spaceship_animation(self, spritesheet, spritesheet_index):
+    frame_x = (spritesheet_index % SPACESHIP_SPRITESHEET_COLUMNS) * SPACESHIP_FRAME_WIDTH
+    frame_y = (spritesheet_index // SPACESHIP_SPRITESHEET_COLUMNS) * SPACESHIP_FRAME_HEIGHT
+    frame_surface = pygame.Surface((SPACESHIP_FRAME_WIDTH, SPACESHIP_FRAME_HEIGHT), pygame.SRCALPHA)
+    frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, SPACESHIP_FRAME_WIDTH, SPACESHIP_FRAME_HEIGHT))
+
+    # Scale the frame to the desired size
+    # We already have the sprite sheet at 1920x1920 so no need to scale it again
+
+    scaled_frame = pygame.transform.scale(frame_surface, (100, 100))
+
+    return scaled_frame
+
 def setup_level(self, level_data):
         self.invaders.empty()
         rows = level_data["rows"]
@@ -138,6 +151,7 @@ def animation(self):
             if a == True:
                 self.level_index += 1
                 a = False
+                # Adjust offsets for galaxy, star, and blackhole spritesheet
                 if self.level_index == 7:
                     self.planet_offset_x = GALAXY_OFFSET_X
                     self.planet_offset_y = GALAXY_OFFSET_Y
@@ -145,7 +159,6 @@ def animation(self):
                     self.planet_offset_x = STAR_OFFSET_X
                     self.planet_offset_y = STAR_OFFSET_Y
                 if self.level_index == 9:
-                    # Adjust for the black hole and galaxy images
                     self.planet_offset_x /= BLACKHOLE_OFFSET_X
                     self.planet_offset_y /= BLACKHOLE_OFFSET_Y
             background_scroll += 9.0

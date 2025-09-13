@@ -16,6 +16,7 @@ GALAXY_OFFSET_Y = -100
 STAR_OFFSET_X = -900
 STAR_OFFSET_Y = 100
 
+# FIX BLACKHOLE Y OFFSET
 BLACKHOLE_OFFSET_X = -250
 BLACKHOLE_OFFSET_Y = 100
 
@@ -33,6 +34,11 @@ SPACESHIP_FRICTION = 0.4
 SPACESHIP_VELOCITY_LIMIT = 15
 SPACESHIP_COUNTER_STRAFE_MULTIPLIER = 2
 SPACESHIP_ANGLE_INCREMENT = 5
+SPACESHIP_FRAME_WIDTH = 109
+SPACESHIP_FRAME_HEIGHT = 113
+SPACESHIP_SPRITESHEET_COLUMNS = 4
+SPACESHIP_SPRITESHEET_ROWS = 4
+SPACESHIP_TOTAL_FRAMES = SPACESHIP_SPRITESHEET_COLUMNS * SPACESHIP_SPRITESHEET_ROWS
 
 # Bullet settings
 BULLET_SPEED = 30
@@ -74,7 +80,7 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/planet7_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/galaxy_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/star_spritesheet.png').convert_alpha(),
-        pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha()
+        pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha(),
     ]
     return bullet_image, invader_image, planets
 
