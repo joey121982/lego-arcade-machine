@@ -11,10 +11,8 @@ def planet_animation(self, spritesheet, spritesheet_index):
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT))
 
     # Scale the frame to the desired size
-    # We already have the sprite sheet at 1920x1920 so no need to scale it again
     
     scaled_frame = pygame.transform.scale(frame_surface, (1920, 1920))
-
     return scaled_frame
 
 def spaceship_animation(self, spritesheet, spritesheet_index):
@@ -24,10 +22,8 @@ def spaceship_animation(self, spritesheet, spritesheet_index):
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, SPACESHIP_FRAME_WIDTH, SPACESHIP_FRAME_HEIGHT))
 
     # Scale the frame to the desired size
-    # We already have the sprite sheet at 1920x1920 so no need to scale it again
 
-    scaled_frame = pygame.transform.scale(frame_surface, (100, 100))
-
+    scaled_frame = pygame.transform.scale(frame_surface, (96, 96))
     return scaled_frame
 
 def setup_level(self, level_data):
