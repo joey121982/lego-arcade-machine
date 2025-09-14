@@ -12,20 +12,9 @@ from .brickinvaders.game import *
 from .brickman.game import *
 from .brickfighter.game import *
 
-# --- info
-# "|" este operatorul bitwise or si aici doar creaza un "union" type de mai multe type-uri
-# un union este un tip de data care spune ca obiectul poate fi mai de mai multe forme
-# de ex boolint x = 10; boolint x = false;
-#               ^ int           ^ boolean
-# in cazul asta boolint este un union de "bool | int"
-# --- joey
 GameType = Brickjump | Brickinvaders | Brickfighter | Brickman | Menu | None
 
 class Shell:
-    screen = None
-    glb = None
-    game: GameType = None
-
     def parse_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -49,10 +38,12 @@ class Shell:
         if hasattr(self.glb, 'return_to_menu') and self.glb.return_to_menu:
             print("Returning to menu...")
             self.game.running = False
-            self.screen.fill((0, 0, 0))  # clear the screen niga
+
+            self.screen.fill((0, 0, 0))
             pygame.display.flip()       
+
             self.glb.return_to_menu = False 
-            self.game = Menu(self.screen, self.glb)  # Switch back to the menu
+            self.game = Menu(self.screen, self.glb)
             
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game
@@ -63,8 +54,8 @@ class Shell:
                 # self.game = Brickjump(self.screen)
                 return
             if ngame == "Brick Man":
-                # self.game = Brickman(self.screen)
+                self.game = Brickman(self.screen, self.glb)
                 return
             if ngame == "Brick Fighter":
-                # self.game = Brickfighter(self.screen)
+                self.game = Brickfighter(self.screen, self.glb)
                 return

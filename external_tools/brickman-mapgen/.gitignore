@@ -1,0 +1,4 @@
+imgui.ini
+bin/*
+maps/*
+!maps/Default.json

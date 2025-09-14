@@ -1,30 +1,59 @@
 # BrickBox
-### versiune 0.0.3
+
+### version 0.1.0, last updated 05.09.2025
+
 ----
-## atentie: proiectul este scris in python 3.10+, versiuni mai vechi nu o sa mearga
+
+## Attention: This project was written using Python 3.10+, older versions will NOT work.
+
 ----
-## pre-rechizite
-* pip
+
+## Prerequisites
+* pip & pipx
 * python ^3.10
-* pygame (instalat prin pip astfel: ```pip install pygame``` in folderul ```src/```)
+* pygame (installed through pipx: ```pipx install pygame```)
+* make (for the automated Makefile)
+
 ----
-## install
-Din folderul ```src/``` ruleaza:
-* mod editabil (recomandat)
-```sh
-pip install -e .
-```
-* mod normal
-```sh
-pip install .
-```
+
+## Script
+From the project root:
+* ``` make run ``` - install and run
+* ``` make install ``` - install only
+* ``` make uninstall ``` - uninstall project
+
 ----
-## rulare
-Dupa instalare, programul o sa fie instalat in PATH direct de ```pip```, fara sa fie nevoie de etape in plus.
-Asadar, poate fi rulat din ```src/``` astfel:
+
+## Manual Installation
+From ```src/``` run:
+* editable mode (recommended)
+```sh
+pipx install -e .
+```
+* normal mode
+```sh
+pipx install .
+```
+
+----
+
+## Running
+After installation, the project will be added to PATH by pipx automatically, no further steps are required.
+The project can be run from the terminal:
 ```sh
 brick-interface
 ```
+
 ----
+
+# External Credits:
+
+Brickman Map Generator:
+* Niels Lohmann - json.hpp https://github.com/nlohmann/json
+* OpenGL3, GLFW - https://www.opengl.org/ & https://www.glfw.org/
+* ImGui - https://github.com/ocornut/imgui
+
+----
+
 ## [Changelog](./changelog.md)
 

@@ -7,6 +7,20 @@ from .invader import Invader
 from .spaceship import Spaceship
 
 class Brickinvaders:
+    def setup_level(self, level_data):
+        self.invaders.empty()
+        rows = level_data["rows"]
+        columns = level_data["columns"]
+        speed = level_data["invader_speed"]
+        pattern = level_data.get("pattern", "default")
+        # You can expand pattern logic here if needed
+        for row in range(rows):
+            for col in range(columns):
+                x = INVADER_START_X + col * (self.invader_width + self.horizontal_spacing)
+                y = INVADER_START_Y + row * (self.invader_height + self.vertical_spacing)
+                invader = Invader(x, y, self.invader_image)
+                invader.speed = speed
+                self.invaders.add(invader)
     name = "Brick Invaders"
     running = True
 
