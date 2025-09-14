@@ -53,39 +53,94 @@ def setup_level(self, level_data):
     speed = level_data["invader_speed"]
     pattern = level_data.get("pattern", "default")
     shooting_chance = level_data.get("shooting_chance", 0)
-    # You can expand pattern logic here if needed
+    spacing_multiplier = level_data.get("spacing_multiplier", 1.8)
 
-    horizontal_spacing  = (SCREEN_WIDTH - columns * (INVADER_WIDTH * 2)) // 2 + INVADER_WIDTH
-    vertical_spacing = INVADER_HEIGHT
+    vertical_offset = INVADER_HEIGHT
+    horizontal_spacing = INVADER_WIDTH * spacing_multiplier
+    vertical_spacing = INVADER_HEIGHT * spacing_multiplier
+    horizontal_offset = (SCREEN_WIDTH - columns * horizontal_spacing) // 2 + INVADER_WIDTH
+
+    def add_invader(row, col):
+        x = horizontal_offset + col * horizontal_spacing
+        y = vertical_offset + row * vertical_spacing
+        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+        self.invaders.add(invader)
+
     if pattern == "default":
         for row in range(rows):
             for col in range(columns):
-                x = horizontal_spacing + col * (INVADER_WIDTH * 2)
-                y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets)
-                self.invaders.add(invader)
+                add_invader(row, col)
     elif pattern == "zigzag":
         for row in range(rows):
             for col in range(columns):
-                x = horizontal_spacing + col * (INVADER_WIDTH * 2) + (row % 2) * INVADER_WIDTH
-                y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets)
+                x = horizontal_offset + col * horizontal_spacing + (row % 2) * INVADER_WIDTH
+                y = vertical_offset + row * vertical_spacing
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                 self.invaders.add(invader)
     elif pattern == "dense":
         for row in range(rows):
             for col in range(columns):
-                x = horizontal_spacing + col * (INVADER_WIDTH * 1.5)
-                y = vertical_spacing + row * (INVADER_HEIGHT * 1.5)
-                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets)
-                self.invaders.add(invader)
+                add_invader(row, col)
     elif pattern == "semicircle":
+        center = columns // 2
+        radius = columns // 2
         for row in range(rows):
             for col in range(columns):
-                if col == 0 or col == columns - 1 or row == 0:
-                    x = horizontal_spacing + col * (INVADER_WIDTH * 2)
-                    y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                    invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets)
-                    self.invaders.add(invader)
+                # Only add invaders that form a semicircle (top half of a circle)
+                if (row == 0) or (col == 0 or col == columns - 1) or (abs(col - center) <= radius - row):
+                    add_invader(row, col)
+    elif pattern == "checker":
+        for row in range(rows):
+            for col in range(columns):
+                if (row + col) % 2 == 0:
+                    add_invader(row, col)
+    elif pattern == "wave":
+        amplitude = 2
+        for row in range(rows):
+            for col in range(columns):
+                y_offset = amplitude * math.sin(col / 2.0)
+                x = horizontal_offset + col * horizontal_spacing
+                y = vertical_offset + row * vertical_spacing + y_offset * INVADER_HEIGHT
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                self.invaders.add(invader)
+    elif pattern == "spiral":
+        # Spiral: fill from outer edge to center in a spiral order
+        spiral = [[False for _ in range(columns)] for _ in range(rows)]
+        left, right, top, bottom = 0, columns - 1, 0, rows - 1
+        while left <= right and top <= bottom:
+            for col in range(left, right + 1):
+                spiral[top][col] = True
+            for row in range(top + 1, bottom + 1):
+                spiral[row][right] = True
+            if top != bottom:
+                for col in range(right - 1, left - 1, -1):
+                    spiral[bottom][col] = True
+            if left != right:
+                for row in range(bottom - 1, top, -1):
+                    spiral[row][left] = True
+            left += 1
+            right -= 1
+            top += 1
+            bottom -= 1
+        for row in range(rows):
+            for col in range(columns):
+                if spiral[row][col]:
+                    add_invader(row, col)
+    elif pattern == "chaos":
+        import random
+        for row in range(rows):
+            for col in range(columns):
+                if random.random() > 0.3:
+                    add_invader(row, col)
+    elif pattern == "wall":
+        for row in range(rows):
+            for col in range(columns):
+                if row == 0 or row == rows - 1 or col == 0 or col == columns - 1:
+                    add_invader(row, col)
+    elif pattern == "onslaught":
+        for row in range(rows):
+            for col in range(columns):
+                add_invader(row, col)
 
 def check_bullet_invader_collisions(self):
     for bullet in self.bullets:
@@ -108,6 +163,7 @@ def check_enemy_bullet_spaceship_collisions(self):
     for bullet in self.enemy_bullets:
         if bullet.rect.colliderect(pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)):
             bullet.kill()
+            self.spaceship.kill()
             explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
             self.running = False
             print("Game Over! You were hit by an enemy bullet.")

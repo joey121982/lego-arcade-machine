@@ -63,7 +63,7 @@ INVADER_SPRITESHEET_COLUMNS = 2
 INVADER_SPRITESHEET_ROWS = 2
 INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
 INVADER_ANIMATION_SLOWDOWN = 500  # Higher is slower
-INVADER_BULLET_SPEED = 15
+INVADER_BULLET_SPEED = 12
 
 # Explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
@@ -117,74 +117,83 @@ def load_images():
 # Level definitions
 LEVELS = [
     {
-        "rows": 6, #6
-        "columns": 11, #11
-        "invader_speed": 0,
-        "pattern": "semicircle",
-        "shooting_chance": 0.01
-    },
-    {
-        "rows": 5, #5
-        "columns": 9, #9
-        "invader_speed": 2, #2
-        "pattern": "default",
-        "shooting_chance": None
-    },
-    {
-        "rows": 4, #4
-        "columns": 9, #9
-        "invader_speed": 3,
-        "pattern": "zigzag",
-        "shooting_chance": None
-    },
-    {
-        "rows": 7, #7
-        "columns": 13, #13
-        "invader_speed": 1.2,
-        "pattern": "dense",
-        "shooting_chance": None
-    },
-    {
         "rows": 8,
         "columns": 14,
         "invader_speed": 2.8,
         "pattern": "checker",
-        "shooting_chance": None
+        "shooting_chance": None,
+        "spacing_multiplier": 1.3
     },
     {
-        "rows": 5,
-        "columns": 15,
-        "invader_speed": 3.2,
-        "pattern": "wave",
-        "shooting_chance": None
-    },
-    {
-        "rows": 9,
+        "rows": 6,
         "columns": 12,
-        "invader_speed": 3.5,
-        "pattern": "spiral",
-        "shooting_chance": None
+        "invader_speed": 3.0,
+        "pattern": "wave",
+        "shooting_chance": None,
+        "spacing_multiplier": 1.5
     },
-    # Especially difficult levels
     {
-        "rows": 10,
+        "rows": 6,
+        "columns": 11,
+        "invader_speed": 3.6,
+        "pattern": "spiral",
+        "shooting_chance": None,
+        "spacing_multiplier": 1.7
+    },
+    {
+        "rows": 8,
         "columns": 16,
         "invader_speed": 4.5,
         "pattern": "chaos",
-        "shooting_chance": None
+        "shooting_chance": None,
+        "spacing_multiplier": 1.1
     },
     {
-        "rows": 12,
+        "rows": 10,
         "columns": 18,
-        "invader_speed": 5.5,
+        "invader_speed": 2.5,
         "pattern": "wall",
-        "shooting_chance": None
+        "shooting_chance": None,
+        "spacing_multiplier": 1.1
     },
     {
         "rows": 15,
         "columns": 20,
         "invader_speed": 7,
         "pattern": "onslaught",
-        "shooting_chance": None
+        "shooting_chance": None,
+        "spacing_multiplier": 1.1
+    },
+    {
+        "rows": 5,
+        "columns": 9,
+        "invader_speed": 2,
+        "pattern": "default",
+        "shooting_chance": 0.0001,
+        "spacing_multiplier": 1.8
+    },
+    {
+        "rows": 4,
+        "columns": 9,
+        "invader_speed": 3,
+        "pattern": "zigzag",
+        "shooting_chance": 0.0001,
+        "spacing_multiplier": 1.8
+    },
+    {
+        "rows": 7,
+        "columns": 13,
+        "invader_speed": 1.2,
+        "pattern": "dense",
+        "shooting_chance": 0.00001,
+        "spacing_multiplier": 1.5
+    },
+    {
+        "rows": 5,
+        "columns": 11,
+        "invader_speed": 0,
+        "pattern": "semicircle",
+        "shooting_chance": 0.002,
+        "spacing_multiplier": 2
     }
 ]
