@@ -20,7 +20,7 @@ STAR_OFFSET_Y = 100
 BLACKHOLE_OFFSET_X = -250
 BLACKHOLE_OFFSET_Y = 100
 
-ANIMATION_SLOWDOWN = 50  # Higher is slower
+PLANET_ANIMATION_SLOWDOWN = 50  # Higher is slower
 PLANET_FRAME_WIDTH = 480
 PLANET_FRAME_HEIGHT = 480
 PLANET_SPRITESHEET_COLUMNS = 32
@@ -39,6 +39,7 @@ SPACESHIP_FRAME_HEIGHT = 48
 SPACESHIP_SPRITESHEET_COLUMNS = 2
 SPACESHIP_SPRITESHEET_ROWS = 2
 SPACESHIP_TOTAL_FRAMES = SPACESHIP_SPRITESHEET_COLUMNS * SPACESHIP_SPRITESHEET_ROWS
+SPACESHIP_ANIMATION_SLOWDOWN = 200 # Higher is slower
 
 # Bullet settings
 BULLET_SPEED = 30
@@ -55,6 +56,24 @@ INVADER_SPEED = 2
 INVADER_DOWN = 30
 INVADER_WIDTH = SCREEN_WIDTH // 25
 INVADER_HEIGHT = SCREEN_HEIGHT // 17
+INVADER_SPRITESHEETS = 5
+INVADER_FRAME_WIDTH = 48
+INVADER_FRAME_HEIGHT = 48
+INVADER_SPRITESHEET_COLUMNS = 2
+INVADER_SPRITESHEET_ROWS = 2
+INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
+INVADER_ANIMATION_SLOWDOWN = 500  # Higher is slower
+
+# Explosion settings
+EXPLOSION_WIDTH = INVADER_WIDTH
+EXPLOSION_HEIGHT = INVADER_HEIGHT
+EXPLOSION_FRAME_WIDTH = INVADER_FRAME_WIDTH
+EXPLOSION_FRAME_HEIGHT = INVADER_FRAME_HEIGHT
+EXPLOSION_SPRITESHEET_COLUMNS = 2
+EXPLOSION_SPRITESHEET_ROWS = 2
+EXPLOSION_TOTAL_FRAMES = EXPLOSION_SPRITESHEET_COLUMNS * EXPLOSION_SPRITESHEET_ROWS
+EXPLOSION_ANIMATION_SLOWDOWN = 500
+
 
 # Colors
 COLOR_RED = (255, 0, 0)
@@ -65,10 +84,6 @@ def load_images():
     bullet_image = pygame.transform.scale(
         pygame.image.load('./assets/brickinvaders/images/BI_bullet.png').convert_alpha(),
         (BULLET_WIDTH, BULLET_HEIGHT)
-    )
-    invader_image = pygame.transform.scale(
-        pygame.image.load('./assets/brickinvaders/images/BI_invader.png').convert_alpha(),
-        (INVADER_WIDTH, INVADER_HEIGHT)
     )
     planets = [
         pygame.image.load('./assets/brickinvaders/images/planet1_spritesheet.png').convert_alpha(),
@@ -82,7 +97,17 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/star_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha(),
     ]
-    return bullet_image, invader_image, planets
+    spaceship_spritesheet = pygame.image.load('./assets/brickinvaders/images/spaceship_spritesheet.png').convert_alpha()
+    
+    invaders = [
+        pygame.image.load('./assets/brickinvaders/images/invader1_spritesheet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/invader2_spritesheet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/invader3_spritesheet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/invader4_spritesheet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/invader5_spritesheet.png').convert_alpha()
+    ]
+    explosion = pygame.image.load('./assets/brickinvaders/images/explosion_spritesheet.png').convert_alpha()
+    return bullet_image, planets, spaceship_spritesheet, invaders, explosion
 
 # Level definitions
 LEVELS = [

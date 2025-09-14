@@ -16,7 +16,7 @@ class Brickinvaders:
         self.glb = glb
         
         # Load Images
-        self.bullet_image, self.invader_image, self.planets = load_images()
+        self.bullet_image, self.planets, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet = load_images()
         self.planet_offset_x = PLANET_OFFSET_X
         self.planet_offset_y = PLANET_OFFSET_Y
 
@@ -24,16 +24,18 @@ class Brickinvaders:
         # Initialize spaceship
         spaceship_x = SCREEN_WIDTH // 2 - 50
         spaceship_y = SCREEN_HEIGHT - 250
-        spaceship_spritesheet = pygame.image.load('./assets/brickinvaders/images/spaceship_spritesheet.png').convert_alpha()
-        self.spaceship = Spaceship(spaceship_x, spaceship_y, spaceship_spritesheet, SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
+        self.spaceship = Spaceship(spaceship_x, spaceship_y, self.spaceship_spritesheet, 
+                                   SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, 
+                                   SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
         
-
         # -- Background Setup --
-        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(), (self.glb.WINWIDTH, self.glb.WINHEIGHT))
+        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(), 
+                                                 (self.glb.WINWIDTH, self.glb.WINHEIGHT))
         
         # -- Sprite Groups --
         self.invaders = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+        self.explosions = pygame.sprite.Group()
         
         # -- Level Setup --
         self.level_index = 0
@@ -61,25 +63,27 @@ class Brickinvaders:
   
     def update(self):
         self.spaceship.update()
-        
 
         # background
         self.screen.blit(self.background, (0, 0 * self.background.get_height()))
-        scaled_planet = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)
+        scaled_planet = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)
         self.screen.blit(scaled_planet, (self.planet_offset_x, self.planet_offset_y))
 
         # Update and draw invaders
         for invader in self.invaders:
-            if invader.actual_x < invader.image.get_width() // 2 or invader.actual_x > 1920 - invader.image.get_width() * 2:
+            if invader.actual_x < invader.rect.width // 2 or invader.actual_x > 1920 - invader.rect.width * 2:
                 self.global_direction += 1
                 for invader in self.invaders:
-                    invader.rect.y += self.global_direction * invader.image.get_height() // 2
+                    invader.rect.y += self.global_direction * invader.rect.height // 2
                 break
-        self.invaders.update(self.global_direction)
+        self.invaders.update(self.global_direction, invader_animation)
         self.invaders.draw(self.screen)
 
         self.bullets.update()
         self.bullets.draw(self.screen)
+        
+        self.explosions.update()
+        self.explosions.draw(self.screen)
 
         # Collisions
         check_bullet_invader_collisions(self)
@@ -90,7 +94,11 @@ class Brickinvaders:
                 print("Congratulations! You've completed all levels!")
                 self.running = False
             else:
+                for bullet in self.bullets:
+                    bullet.kill()
                 animation(self)
+                for explosion in self.explosions:
+                    explosion.kill()
                 setup_level(self, LEVELS[self.level_index])
                 self.global_direction = 1
 

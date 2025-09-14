@@ -6,12 +6,10 @@ from .constants import *
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self, x, y, spritesheet, speed, acceleration, friction, velocity_limit, counter_strafe_multiplier, angle_increment):
         super().__init__()
-        
         self.x = x
         self.y = y
-        
+
         self.spritesheet = spritesheet
-        
 
         self.speed = speed
         self.acceleration = acceleration
@@ -59,8 +57,8 @@ class Spaceship(pygame.sprite.Sprite):
             self.velocity = 0
 
         self.angle = (self.velocity // 5) * self.angle_increment * -1
-        
-        self.rect = spaceship_animation(self, self.spritesheet, pygame.time.get_ticks() // 100 % SPACESHIP_TOTAL_FRAMES)
+
+        self.rect = spaceship_animation(self, self.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
     
     def draw(self, screen):
         rotated_spaceship = pygame.transform.rotozoom(self.rect, self.angle, 1)

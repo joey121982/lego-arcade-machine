@@ -1,10 +1,10 @@
+from brick_interface.brickinvaders.explosion import Explosion
 import pygame
 import math
 from .constants import *
 from .invader import Invader
 
 def planet_animation(self, spritesheet, spritesheet_index):
-
     frame_x = (spritesheet_index % PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_WIDTH
     frame_y = (spritesheet_index // PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_HEIGHT
     frame_surface = pygame.Surface((PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT), pygame.SRCALPHA)
@@ -26,79 +26,117 @@ def spaceship_animation(self, spritesheet, spritesheet_index):
     scaled_frame = pygame.transform.scale(frame_surface, (96, 96))
     return scaled_frame
 
-def setup_level(self, level_data):
-        self.invaders.empty()
-        rows = level_data["rows"]
-        columns = level_data["columns"]
-        speed = level_data["invader_speed"]
-        pattern = level_data.get("pattern", "default")
-        # You can expand pattern logic here if needed
+def invader_animation(self, spritesheet, spritesheet_index):
+    frame_x = (spritesheet_index % INVADER_SPRITESHEET_COLUMNS) * INVADER_FRAME_WIDTH
+    frame_y = (spritesheet_index // INVADER_SPRITESHEET_COLUMNS) * INVADER_FRAME_HEIGHT
+    frame_surface = pygame.Surface((INVADER_FRAME_WIDTH, INVADER_FRAME_HEIGHT), pygame.SRCALPHA)
+    frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, INVADER_FRAME_WIDTH, INVADER_FRAME_HEIGHT))
 
-        horizontal_spacing  = (SCREEN_WIDTH - columns * (INVADER_WIDTH * 2)) // 2 + INVADER_WIDTH
-        vertical_spacing = INVADER_HEIGHT
-        if pattern == "default":
-            for row in range(rows):
-                for col in range(columns):
+    # Scale the frame to the desired size
+
+    scaled_frame = pygame.transform.scale(frame_surface, (INVADER_WIDTH, INVADER_HEIGHT))
+    return scaled_frame
+
+def explosion_animation(self, spritesheet, x, y):
+    for i in range(EXPLOSION_TOTAL_FRAMES):
+        frame_x = (i % EXPLOSION_SPRITESHEET_COLUMNS) * EXPLOSION_FRAME_WIDTH
+        frame_y = (i // EXPLOSION_SPRITESHEET_COLUMNS) * EXPLOSION_FRAME_HEIGHT
+        frame_surface = pygame.Surface((EXPLOSION_FRAME_WIDTH, EXPLOSION_FRAME_HEIGHT), pygame.SRCALPHA)
+        frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, EXPLOSION_FRAME_WIDTH, EXPLOSION_FRAME_HEIGHT))
+        self.screen.blit(pygame.transform.scale(frame_surface, (EXPLOSION_WIDTH, EXPLOSION_HEIGHT)), (x, y))
+        pygame.display.flip()
+
+def setup_level(self, level_data):
+    self.invaders.empty()
+    rows = level_data["rows"]
+    columns = level_data["columns"]
+    speed = level_data["invader_speed"]
+    pattern = level_data.get("pattern", "default")
+    # You can expand pattern logic here if needed
+
+    horizontal_spacing  = (SCREEN_WIDTH - columns * (INVADER_WIDTH * 2)) // 2 + INVADER_WIDTH
+    vertical_spacing = INVADER_HEIGHT
+    if pattern == "default":
+        for row in range(rows):
+            for col in range(columns):
+                x = horizontal_spacing + col * (INVADER_WIDTH * 2)
+                y = vertical_spacing + row * (INVADER_HEIGHT * 2)
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2)
+                self.invaders.add(invader)
+    elif pattern == "zigzag":
+        for row in range(rows):
+            for col in range(columns):
+                x = horizontal_spacing + col * (INVADER_WIDTH * 2) + (row % 2) * INVADER_WIDTH
+                y = vertical_spacing + row * (INVADER_HEIGHT * 2)
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2)
+                self.invaders.add(invader)
+    elif pattern == "dense":
+        for row in range(rows):
+            for col in range(columns):
+                x = horizontal_spacing + col * (INVADER_WIDTH * 1.5)
+                y = vertical_spacing + row * (INVADER_HEIGHT * 1.5)
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2)
+                self.invaders.add(invader)
+    elif pattern == "semicircle":
+        for row in range(rows):
+            for col in range(columns):
+                if col == 0 or col == columns - 1 or row == 0:
                     x = horizontal_spacing + col * (INVADER_WIDTH * 2)
                     y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                    invader = Invader(x, y, self.invader_image, speed)
+                    invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2)
                     self.invaders.add(invader)
-        elif pattern == "zigzag":
-            for row in range(rows):
-                for col in range(columns):
-                    x = horizontal_spacing + col * (INVADER_WIDTH * 2) + (row % 2) * INVADER_WIDTH
-                    y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                    invader = Invader(x, y, self.invader_image, speed)
-                    self.invaders.add(invader)
-        elif pattern == "dense":
-            for row in range(rows):
-                for col in range(columns):
-                    x = horizontal_spacing + col * (INVADER_WIDTH * 1.5)
-                    y = vertical_spacing + row * (INVADER_HEIGHT * 1.5)
-                    invader = Invader(x, y, self.invader_image, speed)
-                    self.invaders.add(invader)
-        elif pattern == "semicircle":
-            for row in range(rows):
-                for col in range(columns):
-                    if col == 0 or col == columns - 1 or row == 0:
-                        x = horizontal_spacing + col * (INVADER_WIDTH * 2)
-                        y = vertical_spacing + row * (INVADER_HEIGHT * 2)
-                        invader = Invader(x, y, self.invader_image, speed)
-                        self.invaders.add(invader)
 
 def check_bullet_invader_collisions(self):
-        for bullet in self.bullets:
-            if pygame.sprite.spritecollideany(bullet, self.invaders):
-                collided_invader = pygame.sprite.spritecollideany(bullet, self.invaders)
-                bullet.kill()
-                collided_invader.kill()
-                # Play explosion sound or show explosion animation
-                # explosion_sound = pygame.mixer.Sound('./assets/brickinvaders/images/explosion.wav')
-                # explosion_sound.play()
+    for bullet in self.bullets:
+        if pygame.sprite.spritecollideany(bullet, self.invaders):
+            collided_invader = pygame.sprite.spritecollideany(bullet, self.invaders)
+            bullet.kill()
+            collided_invader.kill()
+            explosion = Explosion(collided_invader.rect.x, collided_invader.rect.y, self.explosion_spritesheet)
+            self.explosions.add(explosion)
 
 def check_invader_spaceship_collisions(self):
-        for invader in self.invaders:
-            if invader.rect.colliderect(pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)):
-                # Handle collision (e.g., end game or reduce life)
-                self.running = False
-                print("Game Over! An invader hit your spaceship.")
-                break
+    for invader in self.invaders:
+        if invader.rect.colliderect(pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)):
+            explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
+            self.running = False
+            print("Game Over! An invader hit your spaceship.")
+            break
             
 def animation(self):
     animation_duration = 600  # total frames
     clock = pygame.time.Clock()
     
-    # If you really want to understand what i did here, its called linear interpolation and easing functions
-    # The main animation loop is divided into phases: acceleration, constant speed, deceleration,
-    # and a final easing phase to smoothly settle the background and planet into their final positions.
-    # Easing functions are used to create a more natural and visually appealing transition, especially at
-    # the start and end of movements. The ease_out_cubic function provides a smooth deceleration effect.
-    # The lerp function is a simple linear interpolation utility that helps in calculating intermediate
-    # values between a start and end point based on a parameter t (0 to 1).
+    center_x = SCREEN_WIDTH // 2 - 50
+    start_x = self.spaceship.x
+    start_angle = self.spaceship.angle
+    target_angle = 0
+    move_frames = 120
     
-    # I'll give you my Numerical Methods Manual that i studied at the Faculty of Automatic Control that inspired this solution:
-    # https://faculty.ksu.edu.sa/sites/default/files/numerical_analysis_9th.pdf
+    def ease_in_out_quad(t):
+        return 2*t*t if t < 0.5 else -1 + (4 - 2*t)*t
+    
+    for frame in range(move_frames):
+        t = frame / move_frames
+        eased_t = ease_in_out_quad(t)
+        self.spaceship.x = int(start_x + (center_x - start_x) * eased_t)
+        self.spaceship.angle = start_angle + (target_angle - start_angle) * eased_t
 
+        self.screen.blit(self.background, (0, 0 * self.background.get_height()))
+
+        # draw planet
+        scaled_surface = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
+        self.screen.blit(scaled_surface, (self.planet_offset_x, self.planet_offset_y))
+
+        self.spaceship.rect = spaceship_animation(self, self.spaceship.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
+        rotated_spaceship = pygame.transform.rotozoom(self.spaceship.rect, self.spaceship.angle, 1)
+        rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
+        self.screen.blit(rotated_spaceship, rotated_rect.topleft)
+
+        pygame.display.flip()
+        clock.tick(60)
+
+    self.spaceship.angle = target_angle
     background_scroll = 0.0
     planet_scroll = 0.0
     scroll = 1.0
@@ -125,10 +163,10 @@ def animation(self):
             self.screen.blit(self.background, (0, i * self.background.get_height() + background_scroll))
 
         # draw planet
-        scaled_surface = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
+        scaled_surface = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
         self.screen.blit(scaled_surface, (self.planet_offset_x, int(self.planet_offset_y + planet_scroll / 2.0)))
 
-        # rotate spaceship logic (unchanged, but keep int rect for blit)
+        self.spaceship.rect = spaceship_animation(self, self.spaceship.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
         rotated_spaceship = pygame.transform.rotozoom(self.spaceship.rect, self.spaceship.angle, 1)
         rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
