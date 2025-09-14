@@ -23,10 +23,9 @@ class Shell:
             if self.game and hasattr(self.game, 'handle_event'):
                 self.game.handle_event(event)
 
-    def __init__(self, new_screen, new_globals, brickinvaders_images=None):
+    def __init__(self, new_screen, new_globals):
         self.screen = new_screen
         self.glb = new_globals
-        self.brickinvaders_images = brickinvaders_images
         self.game = Menu(self.screen, self.glb)
 
     def update(self):
@@ -49,7 +48,7 @@ class Shell:
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game
             if ngame == "Brick Invaders":
-                self.game = Brickinvaders(self.screen, self.glb, self.brickinvaders_images)
+                self.game = Brickinvaders(self.screen, self.glb)
                 return
             if ngame == "Brick Jump":
                 # self.game = Brickjump(self.screen)

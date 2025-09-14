@@ -4,14 +4,14 @@ import math
 from .constants import *
 from .invader import Invader
 
-def planet_animation(self, spritesheet, spritesheet_index):
+def planet_animation(self, planet_index, spritesheet_index):
+    # Lazy load planet image if not already loaded
+    spritesheet = self.planet_cache[planet_index]
     frame_x = (spritesheet_index % PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_WIDTH
     frame_y = (spritesheet_index // PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_HEIGHT
     frame_surface = pygame.Surface((PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT), pygame.SRCALPHA)
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT))
-
     # Scale the frame to the desired size
-    
     scaled_frame = pygame.transform.scale(frame_surface, (1920, 1920))
     return scaled_frame
 
@@ -191,7 +191,7 @@ def animation(self):
         self.screen.blit(self.background, (0, 0 * self.background.get_height()))
 
         # draw planet
-        scaled_surface = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
+        scaled_surface = planet_animation(self, self.level_index, pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
         self.screen.blit(scaled_surface, (self.planet_offset_x, self.planet_offset_y))
 
         self.spaceship.rect = spaceship_animation(self, self.spaceship.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
@@ -229,7 +229,7 @@ def animation(self):
             self.screen.blit(self.background, (0, i * self.background.get_height() + background_scroll))
 
         # draw planet
-        scaled_surface = planet_animation(self, self.planets[self.level_index], pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
+        scaled_surface = planet_animation(self, self.level_index, pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
         self.screen.blit(scaled_surface, (self.planet_offset_x, int(self.planet_offset_y + planet_scroll / 2.0)))
 
         self.spaceship.rect = spaceship_animation(self, self.spaceship.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
@@ -262,7 +262,7 @@ def animation(self):
                     self.planet_offset_x /= BLACKHOLE_OFFSET_X
                     self.planet_offset_y /= BLACKHOLE_OFFSET_Y
             background_scroll += 9.0
-            self.current_planet = self.planets[self.level_index]
+            self.current_planet = self.planet_cache[self.level_index]
 
         # deceleration phase before final easing
         elif frame > 2 * animation_duration // 3 and frame < animation_duration - final_total:

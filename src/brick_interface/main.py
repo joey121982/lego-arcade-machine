@@ -13,8 +13,7 @@ def run():
     clock = pygame.time.Clock()
 
     # Preload images for Brick Invaders after display is initialized
-    brickinvaders_images = load_images()
-    shell = Shell(screen, glb, brickinvaders_images)
+    shell = Shell(screen, glb)
 
     while(True):
         shell.parse_events()

@@ -23,8 +23,8 @@ BLACKHOLE_OFFSET_Y = 100
 PLANET_ANIMATION_SLOWDOWN = 50  # Higher is slower
 PLANET_FRAME_WIDTH = 480
 PLANET_FRAME_HEIGHT = 480
-PLANET_SPRITESHEET_COLUMNS = 32
-PLANET_SPRITESHEET_ROWS = 32
+PLANET_SPRITESHEET_COLUMNS = 16
+PLANET_SPRITESHEET_ROWS = 16
 PLANET_TOTAL_FRAMES = PLANET_SPRITESHEET_COLUMNS * PLANET_SPRITESHEET_ROWS
 
 # Spaceship settings
@@ -83,7 +83,7 @@ COLOR_WHITE = (255, 255, 255)
 
 def load_images():
     bullet_image = pygame.transform.scale(
-        pygame.image.load('./assets/brickinvaders/images/BI_bullet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(),
         (BULLET_WIDTH, BULLET_HEIGHT)
     )
     planets = [
@@ -96,7 +96,7 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/planet7_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/galaxy_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/star_spritesheet.png').convert_alpha(),
-        pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha(),
+        pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha()
     ]
     spaceship_spritesheet = pygame.image.load('./assets/brickinvaders/images/spaceship_spritesheet.png').convert_alpha()
     
@@ -109,7 +109,7 @@ def load_images():
     ]
     explosion = pygame.image.load('./assets/brickinvaders/images/explosion_spritesheet.png').convert_alpha()
     enemy_bullet_image = pygame.transform.scale(
-        pygame.image.load('./assets/brickinvaders/images/BI_bullet.png').convert_alpha(), 
+        pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(), 
         (BULLET_WIDTH, BULLET_HEIGHT)
     )
     return bullet_image, planets, spaceship_spritesheet, invaders, explosion, enemy_bullet_image
@@ -117,12 +117,44 @@ def load_images():
 # Level definitions
 LEVELS = [
     {
+        "rows": 5,
+        "columns": 9,
+        "invader_speed": 2,
+        "pattern": "default",
+        "shooting_chance": 0.0001,
+        "spacing_multiplier": 1.8
+    },
+    {
+        "rows": 4,
+        "columns": 9,
+        "invader_speed": 3,
+        "pattern": "zigzag",
+        "shooting_chance": 0.0001,
+        "spacing_multiplier": 1.8
+    },
+    {
+        "rows": 7,
+        "columns": 13,
+        "invader_speed": 1.2,
+        "pattern": "dense",
+        "shooting_chance": 0.00001,
+        "spacing_multiplier": 1.5
+    },
+    {
+        "rows": 5,
+        "columns": 11,
+        "invader_speed": 0,
+        "pattern": "semicircle",
+        "shooting_chance": 0.002,
+        "spacing_multiplier": 2
+    },
+    {
         "rows": 8,
         "columns": 14,
         "invader_speed": 2.8,
         "pattern": "checker",
         "shooting_chance": None,
-        "spacing_multiplier": 1.3
+        "spacing_multiplier": 1.2
     },
     {
         "rows": 6,
@@ -163,37 +195,5 @@ LEVELS = [
         "pattern": "onslaught",
         "shooting_chance": None,
         "spacing_multiplier": 1.1
-    },
-    {
-        "rows": 5,
-        "columns": 9,
-        "invader_speed": 2,
-        "pattern": "default",
-        "shooting_chance": 0.0001,
-        "spacing_multiplier": 1.8
-    },
-    {
-        "rows": 4,
-        "columns": 9,
-        "invader_speed": 3,
-        "pattern": "zigzag",
-        "shooting_chance": 0.0001,
-        "spacing_multiplier": 1.8
-    },
-    {
-        "rows": 7,
-        "columns": 13,
-        "invader_speed": 1.2,
-        "pattern": "dense",
-        "shooting_chance": 0.00001,
-        "spacing_multiplier": 1.5
-    },
-    {
-        "rows": 5,
-        "columns": 11,
-        "invader_speed": 0,
-        "pattern": "semicircle",
-        "shooting_chance": 0.002,
-        "spacing_multiplier": 2
     }
 ]
