@@ -63,6 +63,7 @@ INVADER_SPRITESHEET_COLUMNS = 2
 INVADER_SPRITESHEET_ROWS = 2
 INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
 INVADER_ANIMATION_SLOWDOWN = 500  # Higher is slower
+INVADER_BULLET_SPEED = 15
 
 # Explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
@@ -107,70 +108,83 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/invader5_spritesheet.png').convert_alpha()
     ]
     explosion = pygame.image.load('./assets/brickinvaders/images/explosion_spritesheet.png').convert_alpha()
-    return bullet_image, planets, spaceship_spritesheet, invaders, explosion
+    enemy_bullet_image = pygame.transform.scale(
+        pygame.image.load('./assets/brickinvaders/images/BI_bullet.png').convert_alpha(), 
+        (BULLET_WIDTH, BULLET_HEIGHT)
+    )
+    return bullet_image, planets, spaceship_spritesheet, invaders, explosion, enemy_bullet_image
 
 # Level definitions
 LEVELS = [
     {
+        "rows": 6, #6
+        "columns": 11, #11
+        "invader_speed": 0,
+        "pattern": "semicircle",
+        "shooting_chance": 0.01
+    },
+    {
         "rows": 5, #5
         "columns": 9, #9
         "invader_speed": 2, #2
-        "pattern": "default"
+        "pattern": "default",
+        "shooting_chance": None
     },
     {
         "rows": 4, #4
         "columns": 9, #9
-         "invader_speed": 3,
-        "pattern": "zigzag"
+        "invader_speed": 3,
+        "pattern": "zigzag",
+        "shooting_chance": None
     },
     {
         "rows": 7, #7
         "columns": 13, #13
         "invader_speed": 1.2,
-        "pattern": "dense"
-    },
-    {
-        "rows": 6, #6
-        "columns": 11, #11
-        "invader_speed": 2.5,
-        "pattern": "semicircle"
+        "pattern": "dense",
+        "shooting_chance": None
     },
     {
         "rows": 8,
         "columns": 14,
         "invader_speed": 2.8,
-        "pattern": "checker"
+        "pattern": "checker",
+        "shooting_chance": None
     },
     {
         "rows": 5,
         "columns": 15,
         "invader_speed": 3.2,
-        "pattern": "wave"
+        "pattern": "wave",
+        "shooting_chance": None
     },
     {
         "rows": 9,
         "columns": 12,
         "invader_speed": 3.5,
-        "pattern": "spiral"
+        "pattern": "spiral",
+        "shooting_chance": None
     },
     # Especially difficult levels
     {
         "rows": 10,
         "columns": 16,
         "invader_speed": 4.5,
-        "pattern": "chaos"
+        "pattern": "chaos",
+        "shooting_chance": None
     },
     {
         "rows": 12,
         "columns": 18,
         "invader_speed": 5.5,
-        "pattern": "wall"
+        "pattern": "wall",
+        "shooting_chance": None
     },
     {
         "rows": 15,
         "columns": 20,
         "invader_speed": 7,
-        "pattern": "onslaught"
+        "pattern": "onslaught",
+        "shooting_chance": None
     }
-    
 ]

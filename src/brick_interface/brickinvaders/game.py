@@ -7,20 +7,6 @@ from .invader import Invader
 from .spaceship import Spaceship
 
 class Brickinvaders:
-    def setup_level(self, level_data):
-        self.invaders.empty()
-        rows = level_data["rows"]
-        columns = level_data["columns"]
-        speed = level_data["invader_speed"]
-        pattern = level_data.get("pattern", "default")
-        # You can expand pattern logic here if needed
-        for row in range(rows):
-            for col in range(columns):
-                x = INVADER_START_X + col * (self.invader_width + self.horizontal_spacing)
-                y = INVADER_START_Y + row * (self.invader_height + self.vertical_spacing)
-                invader = Invader(x, y, self.invader_image)
-                invader.speed = speed
-                self.invaders.add(invader)
     name = "Brick Invaders"
     running = True
 
@@ -30,7 +16,7 @@ class Brickinvaders:
         self.glb = glb
         
         # Load Images
-        self.bullet_image, self.planets, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet = load_images()
+        self.bullet_image, self.planets, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet, self.enemy_bullet_image = load_images()
         self.planet_offset_x = PLANET_OFFSET_X
         self.planet_offset_y = PLANET_OFFSET_Y
 
@@ -50,6 +36,7 @@ class Brickinvaders:
         self.invaders = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
+        self.enemy_bullets = pygame.sprite.Group()
         
         # -- Level Setup --
         self.level_index = 0
@@ -96,12 +83,16 @@ class Brickinvaders:
         self.bullets.update()
         self.bullets.draw(self.screen)
         
+        self.enemy_bullets.update()
+        self.enemy_bullets.draw(self.screen)
+        
         self.explosions.update()
         self.explosions.draw(self.screen)
 
         # Collisions
         check_bullet_invader_collisions(self)
         check_invader_spaceship_collisions(self)
+        check_enemy_bullet_spaceship_collisions(self)
 
         if len(self.invaders) == 0:
             if self.level_index >= len(LEVELS):
@@ -109,6 +100,8 @@ class Brickinvaders:
                 self.running = False
             else:
                 for bullet in self.bullets:
+                    bullet.kill()
+                for bullet in self.enemy_bullets:
                     bullet.kill()
                 animation(self)
                 for explosion in self.explosions:
