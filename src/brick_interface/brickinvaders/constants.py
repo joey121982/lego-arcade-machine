@@ -42,7 +42,7 @@ SPACESHIP_TOTAL_FRAMES = SPACESHIP_SPRITESHEET_COLUMNS * SPACESHIP_SPRITESHEET_R
 SPACESHIP_ANIMATION_SLOWDOWN = 200 # Higher is slower
 
 # Bullet settings
-BULLET_SPEED = 30
+BULLET_SPEED = 25
 BULLET_WIDTH = 20
 BULLET_HEIGHT = 20
 BULLET_COLOR = (255, 255, 0)
@@ -63,7 +63,7 @@ INVADER_SPRITESHEET_COLUMNS = 2
 INVADER_SPRITESHEET_ROWS = 2
 INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
 INVADER_ANIMATION_SLOWDOWN = 500  # Higher is slower
-INVADER_BULLET_SPEED = 12
+INVADER_BULLET_SPEED = 5
 
 # Explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
@@ -117,6 +117,9 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(), 
         (BULLET_WIDTH, BULLET_HEIGHT)
     )
+    pop_color = (255, 0, 255)  # Bright magenta
+    enemy_bullet_image = pygame.Surface((BULLET_WIDTH, BULLET_HEIGHT), pygame.SRCALPHA)
+    pygame.draw.circle(enemy_bullet_image, pop_color, (BULLET_WIDTH // 3, BULLET_HEIGHT // 3), BULLET_WIDTH // 3)
     return bullet_image, planets, spaceship_spritesheet, invaders, explosion, enemy_bullet_image
 
 # Level definitions

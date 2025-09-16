@@ -5,13 +5,11 @@ from .constants import *
 from .invader import Invader
 
 def planet_animation(self, planet_index, spritesheet_index):
-    # Lazy load planet image if not already loaded
     spritesheet = self.planet_cache[planet_index]
     frame_x = (spritesheet_index % PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_WIDTH
     frame_y = (spritesheet_index // PLANET_SPRITESHEET_COLUMNS) * PLANET_FRAME_HEIGHT
     frame_surface = pygame.Surface((PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT), pygame.SRCALPHA)
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, PLANET_FRAME_WIDTH, PLANET_FRAME_HEIGHT))
-    # Scale the frame to the desired size
     scaled_frame = pygame.transform.scale(frame_surface, (1920, 1920))
     return scaled_frame
 
@@ -20,9 +18,6 @@ def spaceship_animation(self, spritesheet, spritesheet_index):
     frame_y = (spritesheet_index // SPACESHIP_SPRITESHEET_COLUMNS) * SPACESHIP_FRAME_HEIGHT
     frame_surface = pygame.Surface((SPACESHIP_FRAME_WIDTH, SPACESHIP_FRAME_HEIGHT), pygame.SRCALPHA)
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, SPACESHIP_FRAME_WIDTH, SPACESHIP_FRAME_HEIGHT))
-
-    # Scale the frame to the desired size
-
     scaled_frame = pygame.transform.scale(frame_surface, (96, 96))
     return scaled_frame
 
@@ -31,9 +26,6 @@ def invader_animation(self, spritesheet, spritesheet_index):
     frame_y = (spritesheet_index // INVADER_SPRITESHEET_COLUMNS) * INVADER_FRAME_HEIGHT
     frame_surface = pygame.Surface((INVADER_FRAME_WIDTH, INVADER_FRAME_HEIGHT), pygame.SRCALPHA)
     frame_surface.blit(spritesheet, (0, 0), (frame_x, frame_y, INVADER_FRAME_WIDTH, INVADER_FRAME_HEIGHT))
-
-    # Scale the frame to the desired size
-
     scaled_frame = pygame.transform.scale(frame_surface, (INVADER_WIDTH, INVADER_HEIGHT))
     return scaled_frame
 
@@ -105,6 +97,7 @@ def setup_level(self, level_data):
                 self.invaders.add(invader)
     elif pattern == "spiral":
         # Spiral: fill from outer edge to center in a spiral order
+
         spiral = [[False for _ in range(columns)] for _ in range(rows)]
         left, right, top, bottom = 0, columns - 1, 0, rows - 1
         while left <= right and top <= bottom:
@@ -163,7 +156,7 @@ def check_invader_spaceship_collisions(self):
         
 def check_enemy_bullet_spaceship_collisions(self):
     spaceship_rect = pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)
-    close_call_margin = 10
+    close_call_margin = 1
     close_call_line = self.spaceship.y + 100 + close_call_margin
 
     for bullet in self.enemy_bullets:
@@ -185,23 +178,20 @@ def check_enemy_bullet_spaceship_collisions(self):
             self.score.close_call()
 
         bullet.prev_y = bullet.rect.y  # Update for next frame
-            
 
 def animation(self):
-    
-    
     animation_duration = 600  # total frames
     clock = pygame.time.Clock()
-    
+
     center_x = SCREEN_WIDTH // 2 - 50
     start_x = self.spaceship.x
     start_angle = self.spaceship.angle
     target_angle = 0
     move_frames = 120
-    
+
     def ease_in_out_quad(t):
         return 2*t*t if t < 0.5 else -1 + (4 - 2*t)*t
-    
+
     for frame in range(move_frames):
         t = frame / move_frames
         eased_t = ease_in_out_quad(t)
@@ -213,14 +203,11 @@ def animation(self):
         # draw planet
         scaled_surface = planet_animation(self, self.level_index, pygame.time.get_ticks() // PLANET_ANIMATION_SLOWDOWN % PLANET_TOTAL_FRAMES)  # Loop through frames
         self.screen.blit(scaled_surface, (self.planet_offset_x, self.planet_offset_y))
-
         self.spaceship.rect = spaceship_animation(self, self.spaceship.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
         rotated_spaceship = pygame.transform.rotozoom(self.spaceship.rect, self.spaceship.angle, 1)
         rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
-
         self.score.draw(self.screen)
-        
         pygame.display.flip()
         clock.tick(60)
 
@@ -244,7 +231,6 @@ def animation(self):
 
     def ease_out_cubic(t):
         return 1 - (1 - t) ** 3
-    
 
     for frame in range(animation_duration):
         for i in range(0, -9, -1):
@@ -291,7 +277,6 @@ def animation(self):
             scroll *= 0.99
             planet_scroll -= 7.5
 
-        
         elif frame >= animation_duration - final_total:
             if not final_started:
                 final_started = True
@@ -323,9 +308,7 @@ def animation(self):
             planet_scroll = 0.0
             background_scroll = 0
 
-
-        
         self.score.draw(self.screen)
-        
+
         pygame.display.flip()
         clock.tick(60)

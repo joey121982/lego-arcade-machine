@@ -15,12 +15,36 @@ class Brickinvaders:
         self.running = True
         self.screen = screen
         self.glb = glb
-        
+
         # Score
         self.score = Score()
-        
+
+        # --- Fun Loading Screen Animation ---
+        font = pygame.font.SysFont(None, 72)
+        small_font = pygame.font.SysFont(None, 36)
+        loading_text = "Loading Brick Invaders"
+
+        anim_frames = 60 
+        for i in range(anim_frames):
+            self.screen.fill((0, 0, 0))
+
+            # Animate dots
+            dots = '.' * ((i // 15) % 4)
+            text = font.render(loading_text + dots, True, (255, 255, 255))
+            rect = text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2))
+            self.screen.blit(text, rect)
+
+            # Show tip
+            tip = "Tip: Dodge enemy bullets by a hair to get 'close call' points"
+            tip_text = small_font.render(tip, True, (200, 200, 0))
+            tip_rect = tip_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 120))
+            self.screen.blit(tip_text, tip_rect)
+
+            pygame.display.flip()
+            pygame.time.delay(32)
+
         # Load Images
-        images = load_images()  # Load images here
+        images = load_images() 
         self.bullet_image, self.planet_cache, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet, self.enemy_bullet_image = images
         self.planet_offset_x = PLANET_OFFSET_X
         self.planet_offset_y = PLANET_OFFSET_Y
@@ -32,30 +56,31 @@ class Brickinvaders:
         self.spaceship = Spaceship(spaceship_x, spaceship_y, self.spaceship_spritesheet, 
                                    SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, 
                                    SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
-        
+
         # -- Background Setup --
         self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(), 
                                                  (self.glb.WINWIDTH, self.glb.WINHEIGHT))
-        
+
         # -- Sprite Groups --
         self.invaders = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         self.enemy_bullets = pygame.sprite.Group()
-        
+
         # -- Level Setup --
         self.level_index = 0
         setup_level(self, LEVELS[self.level_index])
-        
+
         # -- Planet --
         self.current_planet = self.planet_cache[self.level_index]
 
         # Invader movement
         self.global_direction = 1
-    
+
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and len(self.bullets) < 3:
+
                 # Shoot bullet
                 bullet_x = self.spaceship.x + 50  # Center of the spaceship
                 bullet_y = self.spaceship.y  # Center of the spaceship
@@ -87,7 +112,7 @@ class Brickinvaders:
 
         self.bullets.update(self.score)
         self.bullets.draw(self.screen)
-        
+
         self.enemy_bullets.update(self.score)
         self.enemy_bullets.draw(self.screen)
 
@@ -120,5 +145,3 @@ class Brickinvaders:
 
         self.spaceship.draw(self.screen)
         pygame.display.flip()
-
-    
