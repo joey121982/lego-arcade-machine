@@ -145,6 +145,8 @@ def setup_level(self, level_data):
 def check_bullet_invader_collisions(self):
     for bullet in self.bullets:
         if pygame.sprite.spritecollideany(bullet, self.invaders):
+            self.score.add_points(INVADER_DESTROYED_POINTS)
+            self.score.combo_counter += 1
             collided_invader = pygame.sprite.spritecollideany(bullet, self.invaders)
             bullet.kill()
             collided_invader.kill()
@@ -160,16 +162,34 @@ def check_invader_spaceship_collisions(self):
             break
         
 def check_enemy_bullet_spaceship_collisions(self):
+    spaceship_rect = pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)
+    close_call_margin = 10
+    close_call_line = self.spaceship.y + 100 + close_call_margin
+
     for bullet in self.enemy_bullets:
-        if bullet.rect.colliderect(pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)):
+        # Store previous y position (add this attribute to Bullet if not present)
+        if not hasattr(bullet, 'prev_y'):
+            bullet.prev_y = bullet.rect.y
+
+        # Check for collision (game over)
+        if bullet.rect.colliderect(spaceship_rect):
             bullet.kill()
             self.spaceship.kill()
             explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
             self.running = False
             print("Game Over! You were hit by an enemy bullet.")
             break
+
+        # Check for close call: bullet crosses the close_call_line from above
+        elif bullet.prev_y < close_call_line <= bullet.rect.y:
+            self.score.close_call()
+
+        bullet.prev_y = bullet.rect.y  # Update for next frame
             
+
 def animation(self):
+    
+    
     animation_duration = 600  # total frames
     clock = pygame.time.Clock()
     
@@ -199,6 +219,8 @@ def animation(self):
         rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
 
+        self.score.draw(self.screen)
+        
         pygame.display.flip()
         clock.tick(60)
 
@@ -272,12 +294,10 @@ def animation(self):
         
         elif frame >= animation_duration - final_total:
             if not final_started:
-                # capture starting values only once at start of final easing
                 final_started = True
                 ease_start_frame = frame
                 start_planet_scroll = float(planet_scroll)
                 start_background_scroll = float(background_scroll)
-                # choose target as nearest multiple of background_height
                 target_background_scroll = round(start_background_scroll / self.background.get_height()) * self.background.get_height()
 
             # how far into the soft easing we are (0..1)
@@ -285,13 +305,11 @@ def animation(self):
 
             # soft easing portion
             if eased_frame < final_soft:
-                t = eased_frame / float(final_soft)        # 0..1
-                e = ease_out_cubic(t)                     # smooth ease-out
-                # lerp both planet and background toward their targets
+                t = eased_frame / float(final_soft)
+                e = ease_out_cubic(t)     
                 planet_scroll = lerp(start_planet_scroll, 0.0, e)
                 background_scroll = lerp(start_background_scroll, target_background_scroll, e)
 
-            # quick snap portion near the end to finish nicely
             else:
                 # map snap portion to 0..1
                 t_snap = (eased_frame - final_soft) / max(1, final_snap)
@@ -303,13 +321,11 @@ def animation(self):
         # ensure exact snap at the very last frame
         if frame == animation_duration - 1:
             planet_scroll = 0.0
-            # force to exact target multiple of background_height
-            # background_scroll = round(background_scroll / self.background_height) * self.background_height
             background_scroll = 0
 
-        # debugging output
-        # if frame % 10 == 0:  # print every 10 frames (optional)
-        #     print(frame, round(background_scroll, 2), round(planet_scroll, 2))
 
+        
+        self.score.draw(self.screen)
+        
         pygame.display.flip()
         clock.tick(60)

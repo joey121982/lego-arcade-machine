@@ -6,6 +6,7 @@ from .constants import *
 from .bullet import Bullet
 from .invader import Invader
 from .spaceship import Spaceship
+from .score import Score
 
 class Brickinvaders:
     name = "Brick Invaders"
@@ -15,8 +16,10 @@ class Brickinvaders:
         self.screen = screen
         self.glb = glb
         
-        # Load Images
+        # Score
+        self.score = Score()
         
+        # Load Images
         images = load_images()  # Load images here
         self.bullet_image, self.planet_cache, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet, self.enemy_bullet_image = images
         self.planet_offset_x = PLANET_OFFSET_X
@@ -82,14 +85,16 @@ class Brickinvaders:
         self.invaders.update(self.global_direction, invader_animation)
         self.invaders.draw(self.screen)
 
-        self.bullets.update()
+        self.bullets.update(self.score)
         self.bullets.draw(self.screen)
         
-        self.enemy_bullets.update()
+        self.enemy_bullets.update(self.score)
         self.enemy_bullets.draw(self.screen)
-        
+
         self.explosions.update()
         self.explosions.draw(self.screen)
+
+        self.score.draw(self.screen)
 
         # Collisions
         check_bullet_invader_collisions(self)
@@ -97,10 +102,12 @@ class Brickinvaders:
         check_enemy_bullet_spaceship_collisions(self)
 
         if len(self.invaders) == 0:
+            self.score.add_missed()
             if self.level_index >= len(LEVELS):
                 print("Congratulations! You've completed all levels!")
                 self.running = False
             else:
+                self.score.combo_counter = 0
                 for bullet in self.bullets:
                     bullet.kill()
                 for bullet in self.enemy_bullets:

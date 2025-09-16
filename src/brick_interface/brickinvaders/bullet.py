@@ -13,12 +13,19 @@ class Bullet(pygame.sprite.Sprite):
         rad_angle = math.radians(self.angle)
         self.dx = self.speed * math.cos(rad_angle)
         self.dy = self.speed * math.sin(rad_angle)
+        
+        self.prev_y = self.rect.y
 
-    def update(self):
+    def update(self, score):
+        self.prev_y = self.rect.y
+        
         self.rect.x += self.dx
         self.rect.y += self.dy
 
         # Check if the bullet is off-screen
         if self.rect.x < 0 or self.rect.x > pygame.display.get_surface().get_width() or \
               self.rect.y < 0 or self.rect.y > pygame.display.get_surface().get_height():
+            if self.angle != 90:
+                score.add_combo()
+                score.missed_counter += 1
             self.kill()
