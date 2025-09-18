@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 from .utilities import *
 from .constants import *
 from .bullet import Bullet
@@ -22,12 +23,20 @@ class Brickinvaders:
         # time
         self.start_ticks = pygame.time.get_ticks()
 
-        # loading Screen Animation
+        # loading screen animation
         self.font = pygame.font.SysFont(None, 72)
         self.small_font = pygame.font.SysFont(None, 36)
         loading_text = "Loading Brick Invaders"
 
         anim_frames = 60 
+        tips = [
+            "Tip: Dodge enemy bullets by a hair to get 'close call' points!",
+            "Tip: Try to focus on the bottom row for better chances of survival!",
+            "Tip: Eliminate the edge columns for more time before the invaders reach you!"
+        ]
+        chosen_tip = random.choice(tips)
+        tip_text = self.small_font.render(chosen_tip, True, (200, 200, 0))
+
         for i in range(anim_frames):
             self.screen.fill((0, 0, 0))
 
@@ -37,9 +46,7 @@ class Brickinvaders:
             rect = text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2))
             self.screen.blit(text, rect)
 
-            # show tip
-            tip = "Tip: Dodge enemy bullets by a hair to get 'close call' points"
-            tip_text = self.small_font.render(tip, True, (200, 200, 0))
+            # show the chosen tip
             tip_rect = tip_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 120))
             self.screen.blit(tip_text, tip_rect)
 

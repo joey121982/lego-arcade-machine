@@ -43,8 +43,8 @@ SPACESHIP_ANIMATION_SLOWDOWN = 200 # higher is slower
 
 # bullet settings
 BULLET_SPEED = 25
-BULLET_WIDTH = 20
-BULLET_HEIGHT = 20
+BULLET_WIDTH = 16
+BULLET_HEIGHT = 16
 BULLET_COLOR = (255, 255, 0)
 
 # invader settings
@@ -64,7 +64,8 @@ INVADER_SPRITESHEET_ROWS = 2
 INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
 INVADER_ANIMATION_SLOWDOWN = 500  # higher is slower
 INVADER_BULLET_SPEED = 5
-
+INVADER_BULLET_WIDTH = 24
+INVADER_BULLET_HEIGHT = 24
 # explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
 EXPLOSION_HEIGHT = INVADER_HEIGHT
@@ -89,9 +90,9 @@ COLOR_WHITE = (255, 255, 255)
 
 
 def load_images():
-    bullet_image = pygame.transform.scale(
+    bullet_image = pygame.transform.rotate(
         pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(),
-        (BULLET_WIDTH, BULLET_HEIGHT)
+        180
     )
     planets = [
         pygame.image.load('./assets/brickinvaders/images/planet1_spritesheet.png').convert_alpha(),
@@ -116,12 +117,9 @@ def load_images():
     ]
     explosion = pygame.image.load('./assets/brickinvaders/images/explosion_spritesheet.png').convert_alpha()
     enemy_bullet_image = pygame.transform.scale(
-        pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(), 
-        (BULLET_WIDTH, BULLET_HEIGHT)
+        pygame.image.load('./assets/brickinvaders/images/invader_bullet.png').convert_alpha(),
+        (INVADER_BULLET_WIDTH, INVADER_BULLET_HEIGHT)
     )
-    pop_color = (255, 0, 255)  # bright magenta
-    enemy_bullet_image = pygame.Surface((BULLET_WIDTH, BULLET_HEIGHT), pygame.SRCALPHA)
-    pygame.draw.circle(enemy_bullet_image, pop_color, (BULLET_WIDTH // 3, BULLET_HEIGHT // 3), BULLET_WIDTH // 3)
     return bullet_image, planets, spaceship_spritesheet, invaders, explosion, enemy_bullet_image
 
 # level definitions
@@ -131,7 +129,7 @@ LEVELS = [
         "columns": 9,
         "invader_speed": 1.5,
         "pattern": "default",
-        "shooting_chance": 0,
+        "shooting_chance": 0.0005,
         "spacing_multiplier": 1.8 # good first level
     },
     {
