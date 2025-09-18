@@ -1,8 +1,87 @@
 from brick_interface.brickinvaders.explosion import Explosion
 import pygame
 import math
+import random
 from .constants import *
 from .invader import Invader
+
+def show_win_screen(self):
+    font = pygame.font.SysFont(None, 96)
+    small_font = pygame.font.SysFont(None, 48)
+    self.screen.fill((0, 0, 0))
+
+    elapsed_ms = pygame.time.get_ticks() - self.start_ticks
+    elapsed_sec = elapsed_ms // 1000
+
+    bonus = 0
+    if elapsed_sec < 270:
+        bonus = 100000
+        self.score.value += bonus
+
+    text = font.render("You Win!", True, (0, 255, 0))
+    text_rect = text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 - 80))
+    self.screen.blit(text, text_rect)
+
+    score_text = small_font.render(f"Score: {self.score.value}", True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2))
+    self.screen.blit(score_text, score_rect)
+
+    if bonus > 0:
+        bonus_text = small_font.render(f"Bonus: +{bonus} (under 270s!)", True, (255, 215, 0))
+        bonus_rect = bonus_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 60))
+        self.screen.blit(bonus_text, bonus_rect)
+
+    time_text = small_font.render(f"Time: {elapsed_sec}s", True, (200, 200, 200))
+    time_rect = time_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 120))
+    self.screen.blit(time_text, time_rect)
+
+    tip_text = small_font.render("Press ESC to return to menu", True, (200, 200, 0))
+    tip_rect = tip_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 180))
+    self.screen.blit(tip_text, tip_rect)
+
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+                    self.glb.return_to_menu = True
+                    waiting = False
+        pygame.time.delay(50)
+
+def show_death_screen(self):
+    font = pygame.font.SysFont(None, 96)
+    small_font = pygame.font.SysFont(None, 48)
+    self.screen.fill((0, 0, 0))
+    text = font.render("Game Over", True, (255, 0, 0))
+    text_rect = text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 - 60))
+    self.screen.blit(text, text_rect)
+    score_text = small_font.render(f"Score: {self.score.value}", True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 10))
+    self.screen.blit(score_text, score_rect)
+    tip_text = small_font.render("Press ESC to return to menu", True, (200, 200, 0))
+    tip_rect = tip_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 80))
+    self.screen.blit(tip_text, tip_rect)
+    pygame.display.flip()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+                    self.glb.return_to_menu = True
+                    waiting = False
+
+        pygame.time.delay(50)
 
 def planet_animation(self, planet_index, spritesheet_index):
     spritesheet = self.planet_cache[planet_index]
@@ -44,7 +123,7 @@ def setup_level(self, level_data):
     columns = level_data["columns"]
     speed = level_data["invader_speed"]
     pattern = level_data.get("pattern", "default")
-    shooting_chance = level_data.get("shooting_chance", 0)
+    base_shooting_chance = level_data.get("shooting_chance", 0)
     spacing_multiplier = level_data.get("spacing_multiplier", 1.8)
 
     vertical_offset = INVADER_HEIGHT
@@ -52,40 +131,43 @@ def setup_level(self, level_data):
     vertical_spacing = INVADER_HEIGHT * spacing_multiplier
     horizontal_offset = (SCREEN_WIDTH - columns * horizontal_spacing) // 2 + INVADER_WIDTH
 
-    def add_invader(row, col):
+    def add_invader(row, col, shoot_chance):
         x = horizontal_offset + col * horizontal_spacing
         y = vertical_offset + row * vertical_spacing
-        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shoot_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
         self.invaders.add(invader)
-
+        
     if pattern == "default":
         for row in range(rows):
             for col in range(columns):
-                add_invader(row, col)
+                add_invader(row, col, base_shooting_chance)
     elif pattern == "zigzag":
         for row in range(rows):
             for col in range(columns):
                 x = horizontal_offset + col * horizontal_spacing + (row % 2) * INVADER_WIDTH
                 y = vertical_offset + row * vertical_spacing
-                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                 self.invaders.add(invader)
     elif pattern == "dense":
         for row in range(rows):
             for col in range(columns):
-                add_invader(row, col)
-    elif pattern == "semicircle":
+                add_invader(row, col, base_shooting_chance)
+    elif pattern == "M":
         center = columns // 2
         radius = columns // 2
         for row in range(rows):
             for col in range(columns):
                 # Only add invaders that form a semicircle (top half of a circle)
                 if (row == 0) or (col == 0 or col == columns - 1) or (abs(col - center) <= radius - row):
-                    add_invader(row, col)
+                    add_invader(row, col, base_shooting_chance)
     elif pattern == "checker":
         for row in range(rows):
             for col in range(columns):
                 if (row + col) % 2 == 0:
-                    add_invader(row, col)
+                    if row <= 3:
+                        add_invader(row, col, base_shooting_chance)
+                    else:
+                        add_invader(row, col, 0)
     elif pattern == "wave":
         amplitude = 2
         for row in range(rows):
@@ -93,47 +175,44 @@ def setup_level(self, level_data):
                 y_offset = amplitude * math.sin(col / 2.0)
                 x = horizontal_offset + col * horizontal_spacing
                 y = vertical_offset + row * vertical_spacing + y_offset * INVADER_HEIGHT
-                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                 self.invaders.add(invader)
-    elif pattern == "spiral":
-        # Spiral: fill from outer edge to center in a spiral order
-
-        spiral = [[False for _ in range(columns)] for _ in range(rows)]
-        left, right, top, bottom = 0, columns - 1, 0, rows - 1
-        while left <= right and top <= bottom:
-            for col in range(left, right + 1):
-                spiral[top][col] = True
-            for row in range(top + 1, bottom + 1):
-                spiral[row][right] = True
-            if top != bottom:
-                for col in range(right - 1, left - 1, -1):
-                    spiral[bottom][col] = True
-            if left != right:
-                for row in range(bottom - 1, top, -1):
-                    spiral[row][left] = True
-            left += 1
-            right -= 1
-            top += 1
-            bottom -= 1
-        for row in range(rows):
-            for col in range(columns):
-                if spiral[row][col]:
-                    add_invader(row, col)
     elif pattern == "chaos":
-        import random
         for row in range(rows):
             for col in range(columns):
                 if random.random() > 0.3:
-                    add_invader(row, col)
+                    add_invader(row, col, base_shooting_chance)
+    elif pattern == "reversetriangle":
+        for row in range(rows):
+            for col in range(columns):
+                if row + col < columns and row < col:
+                    if row == 0:
+                        add_invader(row, col, base_shooting_chance)
+                    else:
+                        add_invader(row, col, 0)
     elif pattern == "wall":
         for row in range(rows):
             for col in range(columns):
                 if row == 0 or row == rows - 1 or col == 0 or col == columns - 1:
-                    add_invader(row, col)
+                    x = horizontal_offset + col * horizontal_spacing
+                    y = vertical_offset + row * vertical_spacing
+                    if row == rows - 1:
+                        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, 0, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                    elif row == 0:
+                        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance * 2, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)   
+                    else:
+                        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                    self.invaders.add(invader)
     elif pattern == "onslaught":
         for row in range(rows):
             for col in range(columns):
-                add_invader(row, col)
+                x = horizontal_offset // 2 + col * horizontal_spacing
+                y = vertical_offset // 4 + row * vertical_spacing
+                if row == 0:
+                    invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                else:
+                    invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, 0, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
+                self.invaders.add(invader)
 
 def check_bullet_invader_collisions(self):
     for bullet in self.bullets:
@@ -150,30 +229,48 @@ def check_invader_spaceship_collisions(self):
     for invader in self.invaders:
         if invader.rect.colliderect(pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)):
             explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
-            self.running = False
+            self.dead = True
             print("Game Over! An invader hit your spaceship.")
             break
         
+def check_invaders_reach_bottom(self):
+    for invader in self.invaders:
+        if invader.rect.bottom >= SCREEN_HEIGHT:
+            # End the game if any invader reaches the bottom
+            explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
+            self.dead = True
+            print("Game Over! Invaders reached the bottom of the screen.")
+            break
+        
 def check_enemy_bullet_spaceship_collisions(self):
-    spaceship_rect = pygame.Rect(self.spaceship.x, self.spaceship.y, 100, 100)
+    # shrink the hitbox by 18
+    hitbox_margin = 18
+    hitbox_width = 100 - 2 * hitbox_margin
+    hitbox_height = 100 - 2 * hitbox_margin
+    spaceship_rect = pygame.Rect(
+        self.spaceship.x + hitbox_margin,
+        self.spaceship.y + hitbox_margin,
+        hitbox_width,
+        hitbox_height
+    )
     close_call_margin = 1
     close_call_line = self.spaceship.y + 100 + close_call_margin
 
     for bullet in self.enemy_bullets:
-        # Store previous y position (add this attribute to Bullet if not present)
+        # store previous y position (add this attribute to Bullet if not present)
         if not hasattr(bullet, 'prev_y'):
             bullet.prev_y = bullet.rect.y
 
-        # Check for collision (game over)
+        # check for collision (game over)
         if bullet.rect.colliderect(spaceship_rect):
             bullet.kill()
             self.spaceship.kill()
             explosion_animation(self, self.explosion_spritesheet, self.spaceship.x, self.spaceship.y)
-            self.running = False
+            self.dead = True
             print("Game Over! You were hit by an enemy bullet.")
             break
 
-        # Check for close call: bullet crosses the close_call_line from above
+        # check for close call: bullet crosses the close_call_line from above
         elif bullet.prev_y < close_call_line <= bullet.rect.y:
             self.score.close_call()
 
@@ -208,6 +305,14 @@ def animation(self):
         rotated_rect = rotated_spaceship.get_rect(center=(self.spaceship.x + 50, self.spaceship.y + 50))
         self.screen.blit(rotated_spaceship, rotated_rect.topleft)
         self.score.draw(self.screen)
+
+        # calculate elapsed time in seconds
+        elapsed_ms = pygame.time.get_ticks() - self.start_ticks
+        elapsed_sec = elapsed_ms // 1000
+        time_text = self.small_font.render(f"Time: {elapsed_sec}s", True, (255, 255, 255))
+        text_rect = time_text.get_rect(topright=(self.glb.WINWIDTH - 20, 20))
+        self.screen.blit(time_text, text_rect)
+
         pygame.display.flip()
         clock.tick(60)
 
@@ -259,7 +364,7 @@ def animation(self):
             if a == True:
                 self.level_index += 1
                 a = False
-                # Adjust offsets for galaxy, star, and blackhole spritesheet
+                # adjust offsets for galaxy, star, and blackhole spritesheet
                 if self.level_index == 7:
                     self.planet_offset_x = GALAXY_OFFSET_X
                     self.planet_offset_y = GALAXY_OFFSET_Y
@@ -309,6 +414,13 @@ def animation(self):
             background_scroll = 0
 
         self.score.draw(self.screen)
+
+        # calculate elapsed time in seconds
+        elapsed_ms = pygame.time.get_ticks() - self.start_ticks
+        elapsed_sec = elapsed_ms // 1000
+        time_text = self.small_font.render(f"Time: {elapsed_sec}s", True, (255, 255, 255))
+        text_rect = time_text.get_rect(topright=(self.glb.WINWIDTH - 20, 20))
+        self.screen.blit(time_text, text_rect)
 
         pygame.display.flip()
         clock.tick(60)

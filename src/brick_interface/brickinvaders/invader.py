@@ -41,6 +41,6 @@ class Invader(pygame.sprite.Sprite):
                 if self.rect.x - self.actual_x > self.rect.width * (self.movement_multiplier - 1):
                     self.rect.x = self.actual_x
                     self.frame += 1
-        # Shooting logic
+        # shooting logic
         if self.shooting_chance and random.random() < self.shooting_chance:
             self.shoot()

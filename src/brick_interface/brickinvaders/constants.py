@@ -1,33 +1,33 @@
 import pygame
-# Constants for Brick Invaders game
+# constants for Brick Invaders game
 
-# Screen settings
+# screen settings
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 FPS = 60
 
-# Animation settings
-PLANET_OFFSET_X = -1000 # Lower is left
-PLANET_OFFSET_Y = 400 # Lower is higher
+# animation settings
+PLANET_OFFSET_X = -1000 # lower is left
+PLANET_OFFSET_Y = 400 # lower is higher
 
 GALAXY_OFFSET_X = -750
-GALAXY_OFFSET_Y = -100
+GALAXY_OFFSET_Y = -100 
 
 STAR_OFFSET_X = -900
 STAR_OFFSET_Y = 100
 
 # FIX BLACKHOLE Y OFFSET
 BLACKHOLE_OFFSET_X = -250
-BLACKHOLE_OFFSET_Y = 100
+BLACKHOLE_OFFSET_Y = 350
 
-PLANET_ANIMATION_SLOWDOWN = 50  # Higher is slower
+PLANET_ANIMATION_SLOWDOWN = 50  # higher is slower
 PLANET_FRAME_WIDTH = 480
 PLANET_FRAME_HEIGHT = 480
 PLANET_SPRITESHEET_COLUMNS = 16
 PLANET_SPRITESHEET_ROWS = 16
 PLANET_TOTAL_FRAMES = PLANET_SPRITESHEET_COLUMNS * PLANET_SPRITESHEET_ROWS
 
-# Spaceship settings
+# spaceship settings
 SPACESHIP_SPEED = 10
 SPACESHIP_ACCELERATION = 0.6
 SPACESHIP_FRICTION = 0.4
@@ -39,21 +39,21 @@ SPACESHIP_FRAME_HEIGHT = 48
 SPACESHIP_SPRITESHEET_COLUMNS = 2
 SPACESHIP_SPRITESHEET_ROWS = 2
 SPACESHIP_TOTAL_FRAMES = SPACESHIP_SPRITESHEET_COLUMNS * SPACESHIP_SPRITESHEET_ROWS
-SPACESHIP_ANIMATION_SLOWDOWN = 200 # Higher is slower
+SPACESHIP_ANIMATION_SLOWDOWN = 200 # higher is slower
 
-# Bullet settings
+# bullet settings
 BULLET_SPEED = 25
 BULLET_WIDTH = 20
 BULLET_HEIGHT = 20
 BULLET_COLOR = (255, 255, 0)
 
-# Invader settings
+# invader settings
 INVADER_ROWS = 5
 INVADER_COLUMNS = 11
 INVADER_START_X = 200
 INVADER_START_Y = 50
 INVADER_SPEED = 2
-INVADER_DOWN = 30
+INVADER_DOWN = 25
 INVADER_WIDTH = SCREEN_WIDTH // 25
 INVADER_HEIGHT = SCREEN_HEIGHT // 17
 INVADER_SPRITESHEETS = 5
@@ -62,10 +62,10 @@ INVADER_FRAME_HEIGHT = 48
 INVADER_SPRITESHEET_COLUMNS = 2
 INVADER_SPRITESHEET_ROWS = 2
 INVADER_TOTAL_FRAMES = INVADER_SPRITESHEET_COLUMNS * INVADER_SPRITESHEET_ROWS
-INVADER_ANIMATION_SLOWDOWN = 500  # Higher is slower
+INVADER_ANIMATION_SLOWDOWN = 500  # higher is slower
 INVADER_BULLET_SPEED = 5
 
-# Explosion settings
+# explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
 EXPLOSION_HEIGHT = INVADER_HEIGHT
 EXPLOSION_FRAME_WIDTH = INVADER_FRAME_WIDTH
@@ -75,16 +75,18 @@ EXPLOSION_SPRITESHEET_ROWS = 2
 EXPLOSION_TOTAL_FRAMES = EXPLOSION_SPRITESHEET_COLUMNS * EXPLOSION_SPRITESHEET_ROWS
 EXPLOSION_ANIMATION_SLOWDOWN = 500
 
-# Scoring
+# scoring
 CLOSE_CALL_POINTS = 50
 INVADER_DESTROYED_POINTS = 100
 MISSED_PENALTY = 25
 COMBO_BASE_SCORE = 10
 
-# Colors
+# colors
 COLOR_RED = (255, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
+
+
 
 def load_images():
     bullet_image = pygame.transform.scale(
@@ -117,91 +119,91 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/spaceship_bullet.png').convert_alpha(), 
         (BULLET_WIDTH, BULLET_HEIGHT)
     )
-    pop_color = (255, 0, 255)  # Bright magenta
+    pop_color = (255, 0, 255)  # bright magenta
     enemy_bullet_image = pygame.Surface((BULLET_WIDTH, BULLET_HEIGHT), pygame.SRCALPHA)
     pygame.draw.circle(enemy_bullet_image, pop_color, (BULLET_WIDTH // 3, BULLET_HEIGHT // 3), BULLET_WIDTH // 3)
     return bullet_image, planets, spaceship_spritesheet, invaders, explosion, enemy_bullet_image
 
-# Level definitions
+# level definitions
 LEVELS = [
-    {
-        "rows": 5,
+    { 
+        "rows": 5, #5 
         "columns": 9,
-        "invader_speed": 2,
+        "invader_speed": 1.5,
         "pattern": "default",
-        "shooting_chance": 0.0001,
-        "spacing_multiplier": 1.8
+        "shooting_chance": 0,
+        "spacing_multiplier": 1.8 # good first level
     },
     {
-        "rows": 4,
+        "rows": 5, #5
         "columns": 9,
         "invader_speed": 3,
         "pattern": "zigzag",
-        "shooting_chance": 0.0001,
+        "shooting_chance": 0.00005,
         "spacing_multiplier": 1.8
     },
     {
-        "rows": 7,
+        "rows": 6, #6
         "columns": 13,
         "invader_speed": 1.2,
         "pattern": "dense",
-        "shooting_chance": 0.00001,
+        "shooting_chance": 0,
         "spacing_multiplier": 1.5
     },
     {
-        "rows": 5,
+        "rows": 5, #
         "columns": 11,
         "invader_speed": 0,
-        "pattern": "semicircle",
-        "shooting_chance": 0.002,
+        "pattern": "M",
+        "shooting_chance": 0.0015,
         "spacing_multiplier": 2
     },
     {
-        "rows": 8,
+        "rows": 8, #6
         "columns": 14,
         "invader_speed": 2.8,
         "pattern": "checker",
-        "shooting_chance": None,
+        "shooting_chance": 0.000075,
         "spacing_multiplier": 1.2
     },
     {
-        "rows": 6,
+        "rows": 6, #6
+        "columns": 11,
+        "invader_speed": 3.4,
+        "pattern": "default",
+        "shooting_chance": None,
+        "spacing_multiplier": 1.55
+    },
+    {
+        "rows": 10, #10
+        "columns": 18,
+        "invader_speed": 0.5,
+        "pattern": "wall",
+        "shooting_chance": 0.0001,
+        "spacing_multiplier": 1.1
+    },
+    {
+        "rows": 12,
+        "columns": 18,
+        "invader_speed": 1.5,
+        "pattern": "reversetriangle",
+        "shooting_chance": 0.0005,
+        "spacing_multiplier": 1.2
+    },
+    {
+        "rows": 6, #6
         "columns": 12,
         "invader_speed": 3.0,
         "pattern": "wave",
         "shooting_chance": None,
-        "spacing_multiplier": 1.5
+        "spacing_multiplier": 1.4
     },
     {
-        "rows": 6,
-        "columns": 11,
-        "invader_speed": 3.6,
-        "pattern": "spiral",
-        "shooting_chance": None,
-        "spacing_multiplier": 1.7
-    },
-    {
-        "rows": 8,
+        "rows": 12, #12
         "columns": 16,
-        "invader_speed": 4.5,
-        "pattern": "chaos",
-        "shooting_chance": None,
-        "spacing_multiplier": 1.1
-    },
-    {
-        "rows": 10,
-        "columns": 18,
-        "invader_speed": 2.5,
-        "pattern": "wall",
-        "shooting_chance": None,
-        "spacing_multiplier": 1.1
-    },
-    {
-        "rows": 15,
-        "columns": 20,
-        "invader_speed": 7,
+        "invader_speed": 0.125,
         "pattern": "onslaught",
-        "shooting_chance": None,
-        "spacing_multiplier": 1.1
+        "shooting_chance": 0.0125,
+        "spacing_multiplier": 1.05
     }
 ]

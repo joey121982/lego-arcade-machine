@@ -22,7 +22,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x += self.dx
         self.rect.y += self.dy
 
-        # Check if the bullet is off-screen
+        # check if the bullet is off-screen
         if self.rect.x < 0 or self.rect.x > pygame.display.get_surface().get_width() or \
               self.rect.y < 0 or self.rect.y > pygame.display.get_surface().get_height():
             if self.angle != 90:
