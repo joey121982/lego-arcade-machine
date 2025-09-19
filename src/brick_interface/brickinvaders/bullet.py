@@ -13,12 +13,11 @@ class Bullet(pygame.sprite.Sprite):
         rad_angle = math.radians(self.angle)
         self.dx = self.speed * math.cos(rad_angle)
         self.dy = self.speed * math.sin(rad_angle)
-        
+
         self.prev_y = self.rect.y
 
     def update(self, score):
         self.prev_y = self.rect.y
-        
         self.rect.x += self.dx
         self.rect.y += self.dy
 

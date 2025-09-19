@@ -21,7 +21,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.angle = 0
         self.angle_sign = 0
         self.velocity = 0
-    
+
     def update(self):
         keys = pygame.key.get_pressed()
 
@@ -59,7 +59,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.angle = (self.velocity // 5) * self.angle_increment * -1
 
         self.rect = spaceship_animation(self, self.spritesheet, pygame.time.get_ticks() // SPACESHIP_ANIMATION_SLOWDOWN % SPACESHIP_TOTAL_FRAMES)
-    
+
     def draw(self, screen):
         rotated_spaceship = pygame.transform.rotozoom(self.rect, self.angle, 1)
         rotated_rect = rotated_spaceship.get_rect(center=(self.x + 50, self.y + 50))

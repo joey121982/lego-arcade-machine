@@ -19,7 +19,7 @@ class Brickinvaders:
 
         # score
         self.score = Score()
-        
+
         # time
         self.start_ticks = pygame.time.get_ticks()
 
@@ -28,7 +28,7 @@ class Brickinvaders:
         self.small_font = pygame.font.SysFont(None, 36)
         loading_text = "Loading Brick Invaders"
 
-        anim_frames = 60 
+        anim_frames = 60
         tips = [
             "Tip: Dodge enemy bullets by a hair to get 'close call' points!",
             "Tip: Try to focus on the bottom row for better chances of survival!",
@@ -54,7 +54,7 @@ class Brickinvaders:
             pygame.time.delay(32)
 
         # load Images
-        images = load_images() 
+        images = load_images()
         self.bullet_image, self.planet_cache, self.spaceship_spritesheet, self.invaders_spritesheets, self.explosion_spritesheet, self.enemy_bullet_image = images
         self.planet_offset_x = PLANET_OFFSET_X
         self.planet_offset_y = PLANET_OFFSET_Y
@@ -63,12 +63,12 @@ class Brickinvaders:
         # initialize spaceship
         spaceship_x = SCREEN_WIDTH // 2 - 50
         spaceship_y = SCREEN_HEIGHT - 250
-        self.spaceship = Spaceship(spaceship_x, spaceship_y, self.spaceship_spritesheet, 
-                                   SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION, 
+        self.spaceship = Spaceship(spaceship_x, spaceship_y, self.spaceship_spritesheet,
+                                   SPACESHIP_SPEED, SPACESHIP_ACCELERATION, SPACESHIP_FRICTION,
                                    SPACESHIP_VELOCITY_LIMIT, SPACESHIP_COUNTER_STRAFE_MULTIPLIER, SPACESHIP_ANGLE_INCREMENT)
 
         # -- Background Setup --
-        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(), 
+        self.background = pygame.transform.scale(pygame.image.load('./assets/brickinvaders/images/background.png').convert(),
                                                  (self.glb.WINWIDTH, self.glb.WINHEIGHT))
 
         # -- Sprite Groups --
@@ -106,7 +106,7 @@ class Brickinvaders:
         if self.dead == True:
             show_death_screen(self)
             return
-        
+
         self.spaceship.update()
 
         # background

@@ -68,7 +68,7 @@ def show_death_screen(self):
     tip_rect = tip_text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 + 80))
     self.screen.blit(tip_text, tip_rect)
     pygame.display.flip()
-    
+
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -136,7 +136,7 @@ def setup_level(self, level_data):
         y = vertical_offset + row * vertical_spacing
         invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, shoot_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
         self.invaders.add(invader)
-        
+
     if pattern == "default":
         for row in range(rows):
             for col in range(columns):
@@ -199,7 +199,7 @@ def setup_level(self, level_data):
                     if row == rows - 1:
                         invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, 0, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                     elif row == 0:
-                        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance * 2, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)   
+                        invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance * 2, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                     else:
                         invader = Invader(x, y, self.invaders_spritesheets[row % INVADER_SPRITESHEETS], speed, row % 2, base_shooting_chance, self.enemy_bullet_image, self.enemy_bullets, spacing_multiplier)
                     self.invaders.add(invader)
@@ -232,7 +232,7 @@ def check_invader_spaceship_collisions(self):
             self.dead = True
             print("Game Over! An invader hit your spaceship.")
             break
-        
+
 def check_invaders_reach_bottom(self):
     for invader in self.invaders:
         if invader.rect.bottom >= SCREEN_HEIGHT:
@@ -241,7 +241,7 @@ def check_invaders_reach_bottom(self):
             self.dead = True
             print("Game Over! Invaders reached the bottom of the screen.")
             break
-        
+
 def check_enemy_bullet_spaceship_collisions(self):
     # shrink the hitbox by 18
     hitbox_margin = 18
@@ -396,7 +396,7 @@ def animation(self):
             # soft easing portion
             if eased_frame < final_soft:
                 t = eased_frame / float(final_soft)
-                e = ease_out_cubic(t)     
+                e = ease_out_cubic(t)
                 planet_scroll = lerp(start_planet_scroll, 0.0, e)
                 background_scroll = lerp(start_background_scroll, target_background_scroll, e)
 

@@ -45,7 +45,6 @@ SPACESHIP_ANIMATION_SLOWDOWN = 200 # higher is slower
 BULLET_SPEED = 25
 BULLET_WIDTH = 16
 BULLET_HEIGHT = 16
-BULLET_COLOR = (255, 255, 0)
 
 # invader settings
 INVADER_ROWS = 5
@@ -66,6 +65,7 @@ INVADER_ANIMATION_SLOWDOWN = 500  # higher is slower
 INVADER_BULLET_SPEED = 5
 INVADER_BULLET_WIDTH = 24
 INVADER_BULLET_HEIGHT = 24
+
 # explosion settings
 EXPLOSION_WIDTH = INVADER_WIDTH
 EXPLOSION_HEIGHT = INVADER_HEIGHT
@@ -81,13 +81,6 @@ CLOSE_CALL_POINTS = 50
 INVADER_DESTROYED_POINTS = 100
 MISSED_PENALTY = 25
 COMBO_BASE_SCORE = 10
-
-# colors
-COLOR_RED = (255, 0, 0)
-COLOR_YELLOW = (255, 255, 0)
-COLOR_WHITE = (255, 255, 255)
-
-
 
 def load_images():
     bullet_image = pygame.transform.rotate(
@@ -107,7 +100,6 @@ def load_images():
         pygame.image.load('./assets/brickinvaders/images/blackhole_spritesheet.png').convert_alpha()
     ]
     spaceship_spritesheet = pygame.image.load('./assets/brickinvaders/images/spaceship_spritesheet.png').convert_alpha()
-    
     invaders = [
         pygame.image.load('./assets/brickinvaders/images/invader1_spritesheet.png').convert_alpha(),
         pygame.image.load('./assets/brickinvaders/images/invader2_spritesheet.png').convert_alpha(),
