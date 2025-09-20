@@ -7,26 +7,56 @@ from brick_interface.brickjump.pillar import Pillar
 
 class Level:
     def __init__(self):
+        self.old_scroll = 0  # to force initial draw
+        # groups for platforms and pillars
         self.platforms = pygame.sprite.Group()
         self.pillars = pygame.sprite.Group()
+
+        self.create_initial_elements()
         
-        # Create pillars on both sides
+    def create_initial_elements(self):
+        # create pillars on both sides
+        lower_left_pillar = Pillar(CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y + PILLAR_HEIGHT)
+        lower_right_pillar = Pillar(SCREEN_WIDTH - PILLAR_WIDTH - CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y + PILLAR_HEIGHT)
         left_pillar = Pillar(CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y)
         right_pillar = Pillar(SCREEN_WIDTH - PILLAR_WIDTH - CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y)
-        upper_left_pillar = Pillar(CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y + PILLAR_HEIGHT)
-        upper_right_pillar = Pillar(SCREEN_WIDTH - PILLAR_WIDTH - CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y + PILLAR_HEIGHT)
-        self.pillars.add(left_pillar, right_pillar, upper_left_pillar, upper_right_pillar)
+        upper_left_pillar = Pillar(CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y - PILLAR_HEIGHT)
+        upper_right_pillar = Pillar(SCREEN_WIDTH - PILLAR_WIDTH - CONTAINER_AREA_TOP_X, CONTAINER_AREA_TOP_Y - PILLAR_HEIGHT)
+        self.pillars.add(lower_left_pillar, lower_right_pillar, left_pillar, right_pillar, upper_left_pillar, upper_right_pillar)
 
-        # Create some random platforms for testing
+        # create some random platforms for testing
         for i in range(5):
-            y = PLATFORM_INIT_Y - i * 120
-            if i % 2 == 0:
-                platform = Platform(LEFT_PLATFORM_X, y)
-            else:
-                platform = Platform(RIGHT_PLATFORM_X, y)
+            y = PLATFORM_INIT_Y - i * PLATFORM_Y_GAP
+            x = random.choice([LEFT_PLATFORM_X, RIGHT_PLATFORM_X])
+            platform = Platform(x, y)
             self.platforms.add(platform)
+    
+    def update(self, scroll):
+        # recycle platforms that go off screen
+
+        for platform in self.platforms:
+            if platform.rect.y >= PLATFORM_INIT_Y + PLATFORM_Y_GAP:
+                y = platform.rect.y
+                platform.kill()
+                x = random.choice([LEFT_PLATFORM_X, RIGHT_PLATFORM_X])
+                new_platform = Platform(x, y - 5 * PLATFORM_Y_GAP)
+                self.platforms.add(new_platform)
+        # recycle pillars that go off screen
+        for pillar in self.pillars:
+            if pillar.rect.y > SCREEN_HEIGHT + SCROLL:
+                y = pillar.rect.y
+                pillar.kill()
+                new_pillar = Pillar(pillar.rect.x, y - 3 * PILLAR_HEIGHT)
+                self.pillars.add(new_pillar)
+
+        # scroll logic for platforms and pillars
+        if self.old_scroll != scroll:
+            for sprite in self.platforms:
+                sprite.rect.y += scroll - self.old_scroll
+            for sprite in self.pillars:
+                sprite.rect.y += scroll - self.old_scroll
+            self.old_scroll = scroll
         
     def draw(self, screen):
         self.pillars.draw(screen)
         self.platforms.draw(screen)
-        

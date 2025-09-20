@@ -13,22 +13,27 @@ class Brickjump():
         self.level = Level()
         self.glb = glb
         
+        # the scroll
+        self.scroll = 0
+        
         self.player = Player(LEFT_PLATFORM_X, PLATFORM_INIT_Y + PLATFORM_HEIGHT)
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    self.running = False
-                    self.glb.return_to_menu = True  # signal to return to menu
-                if event.key == pygame.K_a:
-                    self.player.move_left()
-                if event.key == pygame.K_d:
-                    self.player.move_right()
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.running = False
+                self.glb.return_to_menu = True  # signal to return to menu
+            if event.key == pygame.K_a:
+                #self.player.move_left()
+                self.scroll += SCROLL
+                print(self.scroll)
+            if event.key == pygame.K_d:
+                #self.player.move_right()
+                self.scroll += SCROLL
 
     def update(self):
         self.screen.fill(UNDERGROUND_BROWN)
-        self.handle_events()
+        self.level.update(self.scroll)
         self.level.draw(self.screen)
         #self.player.update
         #self.player.draw(self.screen)
