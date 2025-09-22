@@ -7,7 +7,6 @@ from brick_interface.brickjump.pillar import Pillar
 
 class Level:
     def __init__(self):
-        self.old_scroll = 0  # to force initial draw
         # groups for platforms and pillars
         self.platforms = pygame.sprite.Group()
         self.pillars = pygame.sprite.Group()
@@ -25,15 +24,16 @@ class Level:
         self.pillars.add(lower_left_pillar, lower_right_pillar, left_pillar, right_pillar, upper_left_pillar, upper_right_pillar)
 
         # create some random platforms for testing
-        for i in range(5):
+        platform = Platform(LEFT_PLATFORM_X, PLATFORM_INIT_Y)
+        self.platforms.add(platform)
+        for i in range(1, 5):
             y = PLATFORM_INIT_Y - i * PLATFORM_Y_GAP
             x = random.choice([LEFT_PLATFORM_X, RIGHT_PLATFORM_X])
             platform = Platform(x, y)
             self.platforms.add(platform)
     
-    def update(self, scroll):
+    def update(self):
         # recycle platforms that go off screen
-
         for platform in self.platforms:
             if platform.rect.y >= PLATFORM_INIT_Y + PLATFORM_Y_GAP:
                 y = platform.rect.y
@@ -48,14 +48,6 @@ class Level:
                 pillar.kill()
                 new_pillar = Pillar(pillar.rect.x, y - 3 * PILLAR_HEIGHT)
                 self.pillars.add(new_pillar)
-
-        # scroll logic for platforms and pillars
-        if self.old_scroll != scroll:
-            for sprite in self.platforms:
-                sprite.rect.y += scroll - self.old_scroll
-            for sprite in self.pillars:
-                sprite.rect.y += scroll - self.old_scroll
-            self.old_scroll = scroll
         
     def draw(self, screen):
         self.pillars.draw(screen)
