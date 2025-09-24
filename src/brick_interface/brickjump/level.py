@@ -11,6 +11,7 @@ class Level:
         self.platforms = pygame.sprite.Group()
         self.pillars = pygame.sprite.Group()
 
+
         self.create_initial_elements()
         
     def create_initial_elements(self):
@@ -34,12 +35,15 @@ class Level:
     
     def update(self):
         # recycle platforms that go off screen
-        for platform in self.platforms:
-            if platform.rect.y >= PLATFORM_INIT_Y + PLATFORM_Y_GAP:
-                y = platform.rect.y
-                platform.kill()
+        for i in range(1, ON_SCREEN_NUMBER_OF_PLATFORMS):
+            y = PLATFORM_INIT_Y - i * SCROLL
+            y_platform_exists = False
+            for platform in self.platforms:
+                if platform.rect.y == y:
+                    y_platform_exists = True
+            if not y_platform_exists:
                 x = random.choice([LEFT_PLATFORM_X, RIGHT_PLATFORM_X])
-                new_platform = Platform(x, y - 5 * PLATFORM_Y_GAP)
+                new_platform = Platform(x, y)
                 self.platforms.add(new_platform)
         # recycle pillars that go off screen
         for pillar in self.pillars:
@@ -51,4 +55,8 @@ class Level:
         
     def draw(self, screen):
         self.pillars.draw(screen)
-        self.platforms.draw(screen)
+
+        self.platforms.update()
+        for platform in self.platforms:
+            platform.draw(screen)
+        

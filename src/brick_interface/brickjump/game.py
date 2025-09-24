@@ -14,8 +14,8 @@ class Brickjump():
         self.level = Level()
         self.glb = glb
         
-        # the scroll
-        self.scroll = 0
+        # the score
+        self.score = 0
 
         # player
         self.player = Player(PLAYER_ON_LEFT_PLATFORM_X, PLATFORM_INIT_Y - PLAYER_HEIGHT)
@@ -46,7 +46,11 @@ class Brickjump():
         self.player.update(self.level.platforms)
         self.player.draw(self.screen)
 
+        check_player_platform_collisions(self)
         check_player_below_screen(self)
         advance(self)
+
+        for platform in self.level.platforms:
+            print(platform.touched, platform.is_shaking)
         
         pygame.display.flip()
