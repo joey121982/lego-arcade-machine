@@ -3,10 +3,9 @@ from .constants import *
 from .utilities import *
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image, score):
         super().__init__()
-        self.image = pygame.Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill((0, 255, 0))  # Green platform
+        self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.touched = False
 
@@ -16,7 +15,7 @@ class Platform(pygame.sprite.Sprite):
         self.visual_offset_x = 0
         self.visual_offset_y = 0
 
-        self.shake_duration = (INIT_PLATFORM_SHAKE_DURATION * 10 if y == PLATFORM_INIT_Y else max(MIN_PLATFORM_SHAKE_DURATION, INIT_PLATFORM_SHAKE_DURATION - (abs(y - PLATFORM_INIT_Y) // 10000) * 100))
+        self.shake_duration = (INIT_PLATFORM_SHAKE_DURATION * 10 if score == 0 else max(MIN_PLATFORM_SHAKE_DURATION, INIT_PLATFORM_SHAKE_DURATION - (score // 50) * 100))
         self.shake_intensity = SHAKE_INTENSITIY
 
     def update(self):
@@ -28,6 +27,9 @@ class Platform(pygame.sprite.Sprite):
             platform_shake(self)
     
     def draw(self, screen):
-        visual_x = self.rect.x + self.visual_offset_x
+        if self.rect.x < SCREEN_WIDTH // 2:
+            visual_x = self.rect.x + self.visual_offset_x - PLATFORM_DRAW_OFFSET_X
+        else:
+            visual_x = self.rect.x + self.visual_offset_x + PLATFORM_DRAW_OFFSET_X
         visual_y = self.rect.y + self.visual_offset_y
         screen.blit(self.image, (visual_x, visual_y))
