@@ -3,6 +3,7 @@
 import pygame
 from .shell import *
 from .globals import *
+from .brickinvaders.constants import load_images
 
 def run():
     pygame.init()
@@ -10,6 +11,8 @@ def run():
     screen = pygame.display.set_mode((glb.WINWIDTH, glb.WINHEIGHT))
     pygame.display.set_caption('Brick Box')
     clock = pygame.time.Clock()
+
+    # Preload images for Brick Invaders after display is initialized
     shell = Shell(screen, glb)
 
     while(True):

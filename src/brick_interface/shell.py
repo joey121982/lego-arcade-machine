@@ -51,7 +51,7 @@ class Shell:
                 self.game = Brickinvaders(self.screen, self.glb)
                 return
             if ngame == "Brick Jump":
-                # self.game = Brickjump(self.screen)
+                self.game = Brickjump(self.screen, self.glb)
                 return
             if ngame == "Brick Man":
                 self.game = Brickman(self.screen, self.glb)

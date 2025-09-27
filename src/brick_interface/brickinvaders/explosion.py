@@ -26,4 +26,4 @@ class Explosion(pygame.sprite.Sprite):
             if self.index < len(self.frames):
                 self.image = self.frames[self.index]
             else:
-                self.kill()  # Remove sprite when animation is done
+                self.kill()  # remove sprite when animation is done

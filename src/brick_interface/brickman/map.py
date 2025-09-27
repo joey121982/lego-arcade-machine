@@ -38,5 +38,3 @@ class Map:
                 is_coin = self.maze[i][j] == 0 
                 if is_coin:
                     pygame.draw.circle(screen, (255, 255, 255), (j*tilesize + tilesize//2, i*tilesize + tilesize //2), tilesize//12)
-
-
