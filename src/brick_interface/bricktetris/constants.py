@@ -1,5 +1,9 @@
 import pygame
 
+def load_images():
+    background_image = pygame.image.load('./assets/bricktetris/images/tetris_background.jpg').convert()
+    return background_image
+
 # screen positioning
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
