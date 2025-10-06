@@ -10,9 +10,9 @@ from .menu.menu import *
 from .brickjump.game import *
 from .brickinvaders.game import *
 from .brickman.game import *
-from .brickfighter.game import *
+from .bricktetris.game import *
 
-GameType = Brickjump | Brickinvaders | Brickfighter | Brickman | Menu | None
+GameType = Brickjump | Brickinvaders | Bricktetris | Brickman | Menu | None
 
 class Shell:
     def parse_events(self):
@@ -56,6 +56,6 @@ class Shell:
             if ngame == "Brick Man":
                 self.game = Brickman(self.screen, self.glb)
                 return
-            if ngame == "Brick Fighter":
-                self.game = Brickfighter(self.screen, self.glb)
+            if ngame == "Brick Tetris":
+                self.game = Bricktetris(self.screen, self.glb)
                 return

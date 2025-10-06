@@ -55,7 +55,7 @@ class Menu:
             case 0:
                 self.new_game = "Brick Man"
             case 1:
-                self.new_game = "Brick Fighter"
+                self.new_game = "Brick Tetris"
             case 2:
                 self.new_game = "Brick Invaders"
             case 3:
