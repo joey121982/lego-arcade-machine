@@ -7,6 +7,32 @@ def load_images():
     info_screen_image = pygame.image.load('./assets/bricktetris/images/info_screen.png').convert_alpha()
     return background_image, main_screen_image, next_screen_image, info_screen_image
 
+SHAPES = {
+    'I': [[1, 1, 1, 1]],
+    'O': [[1, 1],
+          [1, 1]],
+    'T': [[0, 1, 0],
+          [1, 1, 1]],
+    'S': [[0, 1, 1],
+          [1, 1, 0]],
+    'Z': [[1, 1, 0],
+          [0, 1, 1]],
+    'J': [[0, 0, 1],
+          [1, 1, 1]],
+    'L': [[1, 0, 0],
+          [1, 1, 1]]
+}
+
+SHAPE_COLORS = {
+    'I': (0, 255, 255), # cyan
+    'O': (255, 255, 0), # yellow
+    'T': (128, 0, 128), # purple
+    'S': (0, 255, 0), # green
+    'Z': (255, 0, 0), # red
+    'J': (0, 0, 255), # blue
+    'L': (255, 165, 0) # orange
+}
+
 # screen positioning
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -51,3 +77,6 @@ BOTTOM_INFO_X_OFFSET = INFO_SCREEN_WIDTH // 2 - 10
 # next screen positioning
 TEXT_Y_OFFSET = 37
 TEXT_X_OFFSET = NEXT_SCREEN_WIDTH // 2 - 40
+
+# tetromino 
+TETROMINO_SIZE = 50
