@@ -2,16 +2,20 @@ import pygame
 
 def load_images():
     background_image = pygame.image.load('./assets/bricktetris/images/tetris_background.jpg').convert()
-    return background_image
+    main_screen_image = pygame.image.load('./assets/bricktetris/images/main_screen.png').convert_alpha()
+    next_screen_image = pygame.image.load('./assets/bricktetris/images/next_screen.png').convert_alpha()
+    info_screen_image = pygame.image.load('./assets/bricktetris/images/info_screen.png').convert_alpha()
+    return background_image, main_screen_image, next_screen_image, info_screen_image
 
 # screen positioning
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 LEFT_RIGHT_MARGIN = 150
-MAIN_SCREEN_TOP_DOWN_MARGIN = 50
+MAIN_SCREEN_TOP_DOWN_MARGIN = 40
+MAIN_SCREEN_TOP_DOWN_BORDER_SIZE = 16
 BETWEEN_SCREENS_MARGIN = 100
 MAIN_SCREEN_WIDTH = SCREEN_WIDTH // 3
-MAIN_SCREEN_HEIGHT = SCREEN_HEIGHT - 2 * MAIN_SCREEN_TOP_DOWN_MARGIN
+MAIN_SCREEN_HEIGHT = SCREEN_HEIGHT - 2 * MAIN_SCREEN_TOP_DOWN_MARGIN + 2 * MAIN_SCREEN_TOP_DOWN_BORDER_SIZE # 1008
 NEXT_SCREEN_TOP_MARGIN = MAIN_SCREEN_TOP_DOWN_MARGIN + 50
 INFO_SCREEN_DOWN_MARGIN = MAIN_SCREEN_TOP_DOWN_MARGIN + 50
 MAIN_SCREEN_Y = MAIN_SCREEN_TOP_DOWN_MARGIN
