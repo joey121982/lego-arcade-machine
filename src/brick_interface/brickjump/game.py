@@ -14,11 +14,14 @@ class Brickjump():
         self.level = Level()
         self.glb = glb
         
+        # load images
+        self.bunny_images, self.background_image = load_game_images()
+        
         # the score
         self.score = 0
 
         # player
-        self.player = Player(PLAYER_ON_LEFT_PLATFORM_X, PLATFORM_INIT_Y - PLAYER_HEIGHT)
+        self.player = Player(PLAYER_ON_LEFT_PLATFORM_X, PLATFORM_INIT_Y - PLAYER_HEIGHT, self.bunny_images)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -37,20 +40,22 @@ class Brickjump():
                     self.player.move_right()
                 
     def update(self):
-        self.screen.fill(UNDERGROUND_BROWN)
+        # draw background
+        self.background_image_tinted = self.background_image.copy()
+        self.background_image_tinted.fill(TINTS[((max(4, self.score) - 4) // 100) % 5], special_flags=pygame.BLEND_RGBA_MULT)
+        self.screen.blit(self.background_image_tinted, (0, 0))
 
-
-        self.level.update()
+        self.level.update(self.score)
         self.level.draw(self.screen)
 
         self.player.update(self.level.platforms)
         self.player.draw(self.screen)
+        
+        # draw score left corner
+        score_text = pygame.font.SysFont('Arial', 30).render(f'Score: {self.score}', True, (255, 255, 255))
+        self.screen.blit(score_text, (10, 10))
 
-        check_player_platform_collisions(self)
         check_player_below_screen(self)
         advance(self)
-
-        for platform in self.level.platforms:
-            print(platform.touched, platform.is_shaking)
         
         pygame.display.flip()
