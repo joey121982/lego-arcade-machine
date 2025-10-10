@@ -8,6 +8,3 @@ install:
 
 uninstall:
 	pipx uninstall brick-interface
-
-upload:
-	git push origin HEAD:brickman
