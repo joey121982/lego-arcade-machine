@@ -1,6 +1,6 @@
 # BrickBox
 
-### version 0.1.0, last updated 05.09.2025
+### version 0.2.0, last updated 18.10.2025
 
 ----
 
