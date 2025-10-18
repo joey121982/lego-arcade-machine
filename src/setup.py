@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='brick-interface',
-    version='0.0.6',
+    version='0.2.0',
     packages=find_packages(),
     install_requires=[
         'pygame'
