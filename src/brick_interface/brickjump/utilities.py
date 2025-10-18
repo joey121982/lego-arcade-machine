@@ -10,7 +10,8 @@ def death_screen(self):
     self.screen.blit(overlay, (0, 0))
 
     font = pygame.font.SysFont(None, 64)
-    score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))
+    self.score = int(self.score * (1 + self.pps / 10))  # final score adjustment based on performance
+    score_text = font.render(f"Final Score: {self.score}", True, (255, 255, 255))
     gameover_text = font.render("Game Over", True, (255, 0, 0))
 
     self.screen.blit(gameover_text, (SCREEN_WIDTH // 2 - gameover_text.get_width() // 2, SCREEN_HEIGHT // 2 - 80))
@@ -26,7 +27,7 @@ def death_screen(self):
                 self.glb.return_to_menu = True
             elif event.type == pygame.KEYDOWN:
                 waiting = False
-                self.glb.return_to_menu = True
+                self.__init__(self.screen, self.glb)  # restart game
 
 def check_player_below_screen(self):
     if self.player.rect.top >= SCREEN_HEIGHT:

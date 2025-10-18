@@ -143,14 +143,3 @@ Helper functions for Brick Invaders.
 - A win screen is shown if all levels are completed.
 
 ---
-
-## Getting Started
-
-Make sure you have [pygame](https://www.pygame.org/) installed.  
-Run the main arcade launcher and select Brick Invaders from the menu.
-
----
-
-## License
-
-This project is part of the LEGO Arcade Machine and is for educational and entertainment purposes.

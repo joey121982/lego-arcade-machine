@@ -22,6 +22,10 @@ class Brickjump():
 
         # player
         self.player = Player(PLAYER_ON_LEFT_PLATFORM_X, PLATFORM_INIT_Y - PLAYER_HEIGHT, self.bunny_images)
+        
+        # timer since start
+        self.start_time = pygame.time.get_ticks()
+        self.elapsed_time = 0
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -54,6 +58,14 @@ class Brickjump():
         # draw score left corner
         score_text = pygame.font.SysFont('Arial', 30).render(f'Score: {self.score}', True, (255, 255, 255))
         self.screen.blit(score_text, (10, 10))
+        
+        # count time
+        self.elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
+        
+        # platforms per second left corner
+        self.pps = self.score / max(1, self.elapsed_time)
+        pps_text = pygame.font.SysFont('Arial', 30).render(f'Platforms per second: {self.pps:.2f}', True, (255, 255, 255))
+        self.screen.blit(pps_text, (10, 40))
 
         check_player_below_screen(self)
         advance(self)
