@@ -89,6 +89,10 @@ class Brickinvaders:
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                self.__init__(self.screen, self.glb)
+                return
+
             if event.key == pygame.K_SPACE and len(self.bullets) < 3:
 
                 # shoot bullet
