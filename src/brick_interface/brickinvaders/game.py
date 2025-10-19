@@ -24,8 +24,9 @@ class Brickinvaders:
         self.start_ticks = pygame.time.get_ticks()
 
         # loading screen animation
-        self.font = pygame.font.SysFont(None, 72)
-        self.small_font = pygame.font.SysFont(None, 36)
+        font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+        self.font = pygame.font.Font(font_path, 72)
+        self.small_font = pygame.font.Font(font_path, 36)
         loading_text = "Loading Brick Invaders"
 
         anim_frames = 60
@@ -170,6 +171,9 @@ class Brickinvaders:
         time_text = self.small_font.render(f"Time: {elapsed_sec}s", True, (255, 255, 255))
         text_rect = time_text.get_rect(topright=(self.glb.WINWIDTH - 20, 20))
         self.screen.blit(time_text, text_rect)
+        
+        # for highscore saving
+        self.score_value = self.score.value
 
         self.spaceship.draw(self.screen)
         pygame.display.flip()

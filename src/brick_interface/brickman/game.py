@@ -7,7 +7,6 @@ FINAL_MAP_NUMBER = 10
 class Brickman:
     name = "BrickMan"
     running = True
-    score = 0
 
     def __init__(self, screen, globals):
         self.screen = screen
@@ -16,11 +15,13 @@ class Brickman:
         self.player = Player(self.map.player_start[0], self.map.player_start[1])
         self.tilesize = self.globals.WINHEIGHT//self.map.height
         self.time = 0
+        self.score_value = 0
+        self.font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
 
     def display_score (self):
-        font = pygame.font.SysFont(None, 24)
-        
-        score_text = f"{self.score}"
+        font = pygame.font.Font(self.font_path, 24)
+
+        score_text = f"{self.score_value}"
         text_surface = font.render(score_text, True, (255, 0, 0))
         self.screen.blit(text_surface, (self.globals.WINWIDTH/2 - 40, self.tilesize/3))
 
@@ -36,7 +37,7 @@ class Brickman:
 
         if self.globals.DEBUG_MODE == True:
             # draw debug data to screen
-            font = pygame.font.SysFont(None, 24)
+            font = pygame.font.Font(self.font_path, 24)
             coord_text = f"DEBUG:   X: {self.player.x:.2f} | Y: {self.player.y:.2f} | DIR: {self.player.direction}"
             text_surface = font.render(coord_text, True, (255, 0, 0))
             screen_rect = pygame.display.get_surface().get_rect()

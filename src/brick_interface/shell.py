@@ -11,6 +11,7 @@ from .brickjump.game import *
 from .brickinvaders.game import *
 from .brickman.game import *
 from .bricktetris.game import *
+from .highscores import *
 
 GameType = Brickjump | Brickinvaders | Bricktetris | Brickman | Menu | None
 
@@ -28,6 +29,38 @@ class Shell:
         self.glb = new_globals
         self.game = Menu(self.screen, self.glb)
 
+    def _prompt_for_name(self, max_length: int = 12):
+        font = pygame.font.Font(None, 36)
+        prompt = "New Highscore! Enter name:"
+        name = ""
+        clock = pygame.time.Clock()
+        active = True
+        while active:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        active = False
+                        break
+                    elif event.key == pygame.K_BACKSPACE:
+                        name = name[:-1]
+                    else:
+                        if len(name) < max_length:
+                            name += event.unicode
+
+            # draw prompt
+            self.screen.fill((0, 0, 0))
+            prompt_surf = font.render(prompt, True, (255, 255, 255))
+            name_surf = font.render(name, True, (200, 200, 200))
+            self.screen.blit(prompt_surf, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
+            self.screen.blit(name_surf, (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 50))
+            pygame.display.flip()
+            clock.tick(30)
+
+        return name.strip()
+
     def update(self):
         if not self.game:
             return
@@ -37,6 +70,39 @@ class Shell:
         
         if hasattr(self.glb, 'return_to_menu') and self.glb.return_to_menu:
             print("Returning to menu...")
+
+            # try to save highscore for the current game
+            try:
+                score = 0
+                if hasattr(self.game, 'score'):
+                    s = getattr(self.game, 'score')
+                    if isinstance(s, int):
+                        score = s
+                    elif hasattr(s, 'value'):
+                        try:
+                            score = int(s.value)
+                        except Exception:
+                            score = 0
+                elif hasattr(self.game, 'playable_screen') and hasattr(self.game.playable_screen, 'score'):
+                    try:
+                        score = int(self.game.playable_screen.score)
+                    except Exception:
+                        score = 0
+                elif hasattr(self.game, 'score_value'):
+                    try:
+                        score = int(self.game.score_value)
+                    except Exception:
+                        score = 0
+
+                game_name = getattr(self.game, 'name', 'Unknown')
+                saved, needs_name = update_highscore(game_name, score)
+                if needs_name:
+                    name = self._prompt_for_name()
+                    if name:
+                        update_highscore(game_name, score, name)
+            except Exception as e:
+                print('Highscore save failed:', e)
+
             self.game.running = False
 
             self.screen.fill((0, 0, 0))
@@ -44,6 +110,45 @@ class Shell:
 
             self.glb.return_to_menu = False 
             self.game = Menu(self.screen, self.glb)
+            return
+        
+        if not isinstance(self.game, Menu) and not self.game.running:
+            try:
+                score = 0
+                if hasattr(self.game, 'score'):
+                    s = getattr(self.game, 'score')
+                    if isinstance(s, int):
+                        score = s
+                    elif hasattr(s, 'value'):
+                        try:
+                            score = int(s.value)
+                        except Exception:
+                            score = 0
+                elif hasattr(self.game, 'playable_screen') and hasattr(self.game.playable_screen, 'score'):
+                    try:
+                        score = int(self.game.playable_screen.score)
+                    except Exception:
+                        score = 0
+                elif hasattr(self.game, 'score_value'):
+                    try:
+                        score = int(self.game.score_value)
+                    except Exception:
+                        score = 0
+
+                game_name = getattr(self.game, 'name', 'Unknown')
+                saved, needs_name = update_highscore(game_name, score)
+                if needs_name:
+                    name = self._prompt_for_name()
+                    if name:
+                        update_highscore(game_name, score, name)
+            except Exception as e:
+                print('Highscore save failed:', e)
+
+            self.screen.fill((0, 0, 0))
+            pygame.display.flip()
+            self.game = Menu(self.screen, self.glb)
+            return
+        
             
         if isinstance(self.game, Menu) and self.game.new_game != "None":
             ngame = self.game.new_game

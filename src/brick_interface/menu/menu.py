@@ -1,4 +1,5 @@
 import pygame
+from ..highscores import get_highscores
 
 class Menu:
     name = "Menu"
@@ -100,11 +101,41 @@ class Menu:
             [(self.glb.WINWIDTH + padding_size_horz) / 2, (self.glb.WINHEIGHT + padding_size_vert) / 2]
         ]
         
-        # self.screen.blit(self.background, (0, 0))
+        # Title mapping for each grid item (index -> game name)
+        titles = ["Brick Man", "Brick Tetris", "Brick Invaders", "Brick Jump"]
 
+        # draw menu tiles and highscores (ignore Brick Man for highscores)
+        font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+        title_font = pygame.font.Font(font_path, 36)
+        hs_font = pygame.font.Font(font_path, 24)
         for i in range(0, 4):
             color = selected_color if self.selected_item == i else unselected_color
-            pygame.draw.rect(self.screen, color, pygame.Rect(game_positions[i][0], game_positions[i][1], grid_item_width, grid_item_height))
+            pos = game_positions[i]
+            rect_x, rect_y = pos[0], pos[1]
+            pygame.draw.rect(self.screen, color, pygame.Rect(rect_x, rect_y, grid_item_width, grid_item_height))
+
+            # draw the game title in the tile
+            title_surf = title_font.render(titles[i], True, (255, 255, 255))
+            self.screen.blit(title_surf, (rect_x + 12, rect_y + 12))
+
+            # show top-3 highscores for Brick Tetris, Brick Invaders, Brick Jump
+            if i != 0:  # ignore Brick Man
+                try:
+                    hs_list = get_highscores(titles[i])
+                except Exception:
+                    hs_list = []
+                # draw up to top 3 entries under each tile
+                start_y = rect_y + grid_item_height + 8
+                for rank in range(3):
+                    if rank < len(hs_list):
+                        entry = hs_list[rank]
+                        name = entry.get("name", "ANON")
+                        score = entry.get("score", 0)
+                        line = f"{rank+1}. {name} - {score}"
+                    else:
+                        line = f"{rank+1}. ---"
+                    line_surf = hs_font.render(line, True, (220, 220, 220))
+                    self.screen.blit(line_surf, (rect_x + 12, start_y + rank * 20))
 
         pygame.display.update()
         self.controls()

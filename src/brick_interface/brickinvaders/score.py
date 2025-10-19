@@ -6,7 +6,8 @@ from .constants import *
 class Score:
     def __init__(self):
         self.value = 0
-        self.font = pygame.font.Font(None, 36)
+        font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+        self.font = pygame.font.Font(font_path, 36)
         self.combo_counter = 0
         self.missed_counter = 0
 

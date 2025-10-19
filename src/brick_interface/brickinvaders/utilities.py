@@ -6,8 +6,9 @@ from .constants import *
 from .invader import Invader
 
 def show_win_screen(self):
-    font = pygame.font.SysFont(None, 96)
-    small_font = pygame.font.SysFont(None, 48)
+    font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+    font = pygame.font.Font(font_path, 96)
+    small_font = pygame.font.Font(font_path, 48)
     self.screen.fill((0, 0, 0))
 
     elapsed_ms = pygame.time.get_ticks() - self.start_ticks
@@ -55,8 +56,9 @@ def show_win_screen(self):
         pygame.time.delay(50)
 
 def show_death_screen(self):
-    font = pygame.font.SysFont(None, 96)
-    small_font = pygame.font.SysFont(None, 48)
+    font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+    font = pygame.font.Font(font_path, 96)
+    small_font = pygame.font.Font(font_path, 48)
     self.screen.fill((0, 0, 0))
     text = font.render("Game Over", True, (255, 0, 0))
     text_rect = text.get_rect(center=(self.glb.WINWIDTH // 2, self.glb.WINHEIGHT // 2 - 60))

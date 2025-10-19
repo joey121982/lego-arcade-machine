@@ -9,7 +9,7 @@ class Screen:
         self.x = x
         self.y = y
         self.image = image
-        self.font_text = pygame.font.Font("./assets/bricktetris/fonts/Pixellettersfull-BnJ5.ttf", 36)
+        self.font_text = pygame.font.Font("./assets/fonts/Pixellettersfull-BnJ5.ttf", 36)
 
     def draw(self):
         if self.image and not isinstance(self, PlayableScreen):

@@ -9,9 +9,10 @@ def death_screen(self):
     overlay.fill((0, 0, 0))
     self.screen.blit(overlay, (0, 0))
 
-    font = pygame.font.SysFont(None, 64)
-    self.score = int(self.score * (1 + self.pps / 10))  # final score adjustment based on performance
-    score_text = font.render(f"Final Score: {self.score}", True, (255, 255, 255))
+    font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
+    font = pygame.font.Font(font_path, 64)
+    self.score_value = int(self.score_value * (1 + self.pps / 10))  # final score adjustment based on performance
+    score_text = font.render(f"Final Score: {self.score_value}", True, (255, 255, 255))
     gameover_text = font.render("Game Over", True, (255, 0, 0))
 
     self.screen.blit(gameover_text, (SCREEN_WIDTH // 2 - gameover_text.get_width() // 2, SCREEN_HEIGHT // 2 - 80))
@@ -27,7 +28,7 @@ def death_screen(self):
                 self.glb.return_to_menu = True
             elif event.type == pygame.KEYDOWN:
                 waiting = False
-                self.__init__(self.screen, self.glb)  # restart game
+                self.glb.return_to_menu = True  # restart game
 
 def check_player_below_screen(self):
     if self.player.rect.top >= SCREEN_HEIGHT:
@@ -44,7 +45,7 @@ def advance(self):
             sprite.rect.y += SCROLL
         self.player.rect.y += SCROLL
         self.player.prev_y = self.player.rect.y
-        self.score += 1
+        self.score_value += 1
 
 def platform_shake(self):
     current_time = pygame.time.get_ticks()
