@@ -111,7 +111,7 @@ class Bricktetris:
 
         # basic game over display
         if self.playable_screen.game_over:
-            font = pygame.font.Font("./assets/bricktetris/fonts/Pixellettersfull-BnJ5.ttf", 100)
+            font = pygame.font.Font("./assets/fonts/Pixellettersfull-BnJ5.ttf", 100)
             text = font.render('GAME OVER', True, WHITE)
             text_rect = text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
             self.screen.blit(text, text_rect)

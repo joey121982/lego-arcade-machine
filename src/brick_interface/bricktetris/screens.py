@@ -163,7 +163,7 @@ class PlayableScreen(Screen):
 class NextScreen(Screen):
     def __init__(self, screen, x, y, image):
         super().__init__(screen, x, y, image)
-        self.font_text = pygame.font.Font("./assets/bricktetris/fonts/Pixellettersfull-BnJ5.ttf", 54)
+        self.font_text = pygame.font.Font("./assets/fonts/Pixellettersfull-BnJ5.ttf", 54)
 
     def draw(self, next_piece_shape_name):
         super().draw()

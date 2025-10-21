@@ -11,9 +11,9 @@ class Brickman:
     def __init__(self, screen, globals):
         self.screen = screen
         self.globals = globals
-        self.map = Map()
-        self.player = Player(self.map.player_start[0], self.map.player_start[1])
+        self.map = Map(self.globals)
         self.tilesize = self.globals.WINHEIGHT//self.map.height
+        self.player = Player(self.map.player_start[0], self.map.player_start[1])
         self.time = 0
         self.score_value = 0
         self.font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
