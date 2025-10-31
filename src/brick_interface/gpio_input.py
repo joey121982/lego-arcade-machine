@@ -1,84 +1,121 @@
-"""GPIO input helper to map Raspberry Pi GPIO pins to pygame key events.
+"""GPIO input helper using libgpiod to map GPIO lines to pygame key events.
 
-This module is optional — if RPi.GPIO is not available it becomes a no-op so
-the project can run on non-Pi machines.
+This module uses the libgpiod Python bindings (imported as `gpiod`) and
+listens for both-edge events on the specified BCM GPIO lines on `gpiochip0`.
 
-Wired as: 3V3 -> button -> resistor -> input pin (active HIGH when pressed).
-We use BCM numbering and enable a pull-down on inputs.
+Behavior:
+- Posts pygame.KEYDOWN when a line has a rising edge (pressed/high).
+- Posts pygame.KEYUP when a line has a falling edge (released/low).
+- If `gpiod` is not available the module is a harmless no-op.
+
+Wiring expectation: 3V3 -> button -> resistor -> input pin (active HIGH when pressed).
+If you use pull-ups externally, the logic may need flipping or use active-low flags.
 """
+
 import atexit
+import threading
+import time
 import pygame
 
 try:
-    import RPi.GPIO as GPIO
+    import gpiod
 except Exception:
-    GPIO = None
+    gpiod = None
 
-# BCM pin -> pygame key mapping requested by the user
+# BCM pin -> pygame key mapping requested by the user (BCM numbers)
 PIN_KEY_MAP = {
-    26: pygame.K_a,      # LEFT (A)
-    19: pygame.K_d,      # RIGHT (D)
-    13: pygame.K_w,      # UP (W)
-    6:  pygame.K_s,      # DOWN (S)
-    5:  pygame.K_ESCAPE, # MENU (ESCAPE)
-    21: pygame.K_SPACE   # BUTTON_X (SPACE)
+    26: pygame.K_a,      # LEFT (A)  -> physical pin 37
+    19: pygame.K_d,      # RIGHT (D) -> physical pin 35
+    13: pygame.K_w,      # UP (W)    -> physical pin 33
+    6:  pygame.K_s,      # DOWN (S)  -> physical pin 31
+    5:  pygame.K_ESCAPE, # MENU (ESCAPE) -> physical pin 29
+    21: pygame.K_SPACE   # BUTTON_X (SPACE) -> physical pin 40
 }
 
-# debounce in milliseconds
-BOUNCE_MS = 150
+CHIP_NAME = "gpiochip0"
 
 _initialized = False
+_workers = []
+_stop_event = None
 
-def _gpio_callback_factory(pin, key):
-    def _callback(channel):
+
+def _line_worker(chip, pin, key, stop_event):
+    """Worker that waits for edge events on a single line and posts pygame events."""
+    try:
+        line = chip.get_line(pin)
+        # request both edges
+        line.request(consumer="lego-arcade-gpio", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+    except Exception:
+        return
+
+    while not stop_event.is_set():
         try:
-            state = GPIO.input(channel)
-            if state:
-                ev = pygame.event.Event(pygame.KEYDOWN, {"key": key})
-            else:
-                ev = pygame.event.Event(pygame.KEYUP, {"key": key})
-            # posting events from callback threads — pygame.event.post is thread-safe
-            pygame.event.post(ev)
+            # wait for an event with timeout so we can react to stop_event periodically
+            if line.event_wait(1):
+                ev = line.event_read()
+                if ev.event_type == gpiod.LineEvent.RISING:
+                    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, {"key": key}))
+                elif ev.event_type == gpiod.LineEvent.FALLING:
+                    pygame.event.post(pygame.event.Event(pygame.KEYUP, {"key": key}))
         except Exception:
-            # swallow errors to avoid crashing the callback thread
-            return
-    return _callback
+            # if any error occurs, break the loop for this worker
+            break
+
+    try:
+        line.release()
+    except Exception:
+        pass
+
 
 def init():
-    """Initialize GPIO pins and attach event callbacks.
+    """Initialize gpiod listeners for configured pins.
 
-    Safe to call multiple times; if RPi.GPIO is not present this is a no-op.
+    Safe to call multiple times. If `gpiod` is not installed this is a no-op.
     """
-    global _initialized
+    global _initialized, _workers, _stop_event
     if _initialized:
         return
-    if GPIO is None:
+    if gpiod is None:
         _initialized = True
         return
 
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
+    try:
+        chip = gpiod.Chip(CHIP_NAME)
+    except Exception:
+        # cannot open the chip; behave as no-op
+        _initialized = True
+        return
+
+    _stop_event = threading.Event()
+    _workers = []
 
     for pin, key in PIN_KEY_MAP.items():
-        try:
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-            cb = _gpio_callback_factory(pin, key)
-            GPIO.add_event_detect(pin, GPIO.BOTH, callback=cb, bouncetime=BOUNCE_MS)
-        except Exception:
-            # ignore setup errors per-pin to be resilient to different hardware
-            continue
+        # spawn a worker thread per pin; resilient to per-pin failures
+        t = threading.Thread(target=_line_worker, args=(chip, pin, key, _stop_event), daemon=True)
+        t.start()
+        _workers.append(t)
 
-    # ensure GPIO cleaned on exit
     atexit.register(cleanup)
     _initialized = True
 
+
 def cleanup():
-    global _initialized
-    if GPIO is None:
+    """Stop worker threads and release resources."""
+    global _initialized, _workers, _stop_event
+    if gpiod is None:
         _initialized = False
         return
-    try:
-        GPIO.cleanup()
-    except Exception:
-        pass
+
+    if _stop_event is not None:
+        _stop_event.set()
+
+    # give threads a moment to finish
+    for t in _workers:
+        try:
+            t.join(timeout=0.5)
+        except Exception:
+            pass
+
+    _workers = []
+    _stop_event = None
     _initialized = False
