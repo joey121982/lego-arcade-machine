@@ -4,8 +4,6 @@ from .shell import *
 from .globals import *
 
 def run():
-
-
     pygame.init()
     glb = globals()
     screen = pygame.display.set_mode((glb.WINWIDTH, glb.WINHEIGHT))

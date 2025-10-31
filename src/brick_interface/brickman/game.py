@@ -3,6 +3,12 @@ import pygame
 from .map import *
 from .player import *
 
+# optional GPIO integration for Raspberry Pi buttons
+try:
+    from .. import gpio_input
+except Exception:
+    gpio_input = None
+
 ##############################
 ##############################
 ##############################
@@ -27,6 +33,13 @@ class Brickman:
 
         self.start_ticks = pygame.time.get_ticks()
         self.elapsed_seconds = 0.0
+        # initialize GPIO pins if running on Pi and helper is available
+        try:
+            if gpio_input is not None:
+                gpio_input.init()
+        except Exception:
+            # ignore GPIO initialization errors to keep fallback keyboard behavior
+            pass
         
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
