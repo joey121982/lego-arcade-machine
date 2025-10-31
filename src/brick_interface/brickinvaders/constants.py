@@ -20,11 +20,11 @@ STAR_OFFSET_Y = 100
 BLACKHOLE_OFFSET_X = -250
 BLACKHOLE_OFFSET_Y = 350
 
-PLANET_ANIMATION_SLOWDOWN = 50  # higher is slower
-PLANET_FRAME_WIDTH = 480
-PLANET_FRAME_HEIGHT = 480
-PLANET_SPRITESHEET_COLUMNS = 16
-PLANET_SPRITESHEET_ROWS = 16
+PLANET_ANIMATION_SLOWDOWN = 700  # higher is slower
+PLANET_FRAME_WIDTH = 240
+PLANET_FRAME_HEIGHT = 240
+PLANET_SPRITESHEET_COLUMNS = 6
+PLANET_SPRITESHEET_ROWS = 6
 PLANET_TOTAL_FRAMES = PLANET_SPRITESHEET_COLUMNS * PLANET_SPRITESHEET_ROWS
 
 # spaceship settings
@@ -169,7 +169,7 @@ LEVELS = [
         "columns": 18,
         "invader_speed": 0.5,
         "pattern": "wall",
-        "shooting_chance": 0.0001,
+        "shooting_chance": 0.0003,
         "spacing_multiplier": 1.1
     },
     {
@@ -185,7 +185,7 @@ LEVELS = [
         "columns": 12,
         "invader_speed": 3.0,
         "pattern": "wave",
-        "shooting_chance": None,
+        "shooting_chance": 0.000005,
         "spacing_multiplier": 1.4
     },
     {

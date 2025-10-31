@@ -1,5 +1,6 @@
 import pygame
 from ..highscores import get_highscores
+import os
 
 class Menu:
     name = "Menu"
@@ -14,6 +15,23 @@ class Menu:
         self.glb = new_globals
         self.background = pygame.image.load("././assets/menu/images/bg.png")
         self.background = pygame.transform.scale(self.background, (self.glb.WINWIDTH, self.glb.WINHEIGHT))
+        self.load_thumbnails()
+        
+    def load_thumbnails(self):
+        preferred = {
+            "Brick Man": "./assets/menu/images/brickman_screenshot.png",
+            "Brick Tetris": "./assets/menu/images/bricktetris_screenshot.png",
+            "Brick Invaders": "./assets/menu/images/brickinvaders_screenshot.png",
+            "Brick Jump": "./assets/menu/images/brickjump_screenshot.png"
+        }
+        self.thumbnails = {}
+        for name, path in preferred.items():
+            try:
+                img = pygame.image.load(path)
+                # keep original; we'll scale when drawing
+                self.thumbnails[name] = img.convert_alpha()
+            except Exception:
+                self.thumbnails[name] = None
 
     def controls(self):
         # --- todo
@@ -112,30 +130,42 @@ class Menu:
             color = selected_color if self.selected_item == i else unselected_color
             pos = game_positions[i]
             rect_x, rect_y = pos[0], pos[1]
-            pygame.draw.rect(self.screen, color, pygame.Rect(rect_x, rect_y, grid_item_width, grid_item_height))
 
-            # draw the game title in the tile
-            title_surf = title_font.render(titles[i], True, (255, 255, 255))
+            # Try to draw a thumbnail for this game; fall back to colored rect
+            title = titles[i]
+            thumb = self.thumbnails.get(title)
+            if thumb:
+                try:
+                    scaled = pygame.transform.smoothscale(thumb, (int(grid_item_width), int(grid_item_height)))
+                    self.screen.blit(scaled, (rect_x, rect_y))
+                    # draw a subtle border to indicate selection
+                    border_color = (255, 255, 255) if self.selected_item == i else (0, 0, 0)
+                    pygame.draw.rect(self.screen, border_color, pygame.Rect(rect_x, rect_y, grid_item_width, grid_item_height), 4)
+                except Exception:
+                    pygame.draw.rect(self.screen, color, pygame.Rect(rect_x, rect_y, grid_item_width, grid_item_height))
+            else:
+                pygame.draw.rect(self.screen, color, pygame.Rect(rect_x, rect_y, grid_item_width, grid_item_height))
+
+            # draw the game title on top of the tile
+            title_surf = title_font.render(title, True, (255, 255, 255))
             self.screen.blit(title_surf, (rect_x + 12, rect_y + 12))
 
-            # show top-3 highscores for Brick Tetris, Brick Invaders, Brick Jump
-            if i != 0:  # ignore Brick Man
-                try:
-                    hs_list = get_highscores(titles[i])
-                except Exception:
-                    hs_list = []
-                # draw up to top 3 entries under each tile
-                start_y = rect_y + grid_item_height + 8
-                for rank in range(3):
-                    if rank < len(hs_list):
-                        entry = hs_list[rank]
-                        name = entry.get("name", "ANON")
-                        score = entry.get("score", 0)
-                        line = f"{rank+1}. {name} - {score}"
-                    else:
-                        line = f"{rank+1}. ---"
-                    line_surf = hs_font.render(line, True, (220, 220, 220))
-                    self.screen.blit(line_surf, (rect_x + 12, start_y + rank * 20))
+            # show top-3 highscores for this game
+            try:
+                hs_list = get_highscores(title)
+            except Exception:
+                hs_list = []
+            start_y = rect_y + grid_item_height + 8
+            for rank in range(3):
+                if rank < len(hs_list):
+                    entry = hs_list[rank]
+                    name = entry.get("name", "ANON")
+                    score = entry.get("score", 0)
+                    line = f"{rank+1}. {name} - {score}"
+                else:
+                    line = f"{rank+1}. ---"
+                line_surf = hs_font.render(line, True, (220, 220, 220))
+                self.screen.blit(line_surf, (rect_x + 12, start_y + rank * 20))
 
         pygame.display.update()
         self.controls()

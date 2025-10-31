@@ -1,6 +1,11 @@
 {
   "Brick Invaders": [
     {
+      "score": 72645,
+      "name": "dsda",
+      "ts": 1761938187
+    },
+    {
       "score": 52660,
       "name": "sebi",
       "ts": 1760884897
@@ -9,11 +14,6 @@
       "score": 33945,
       "name": "cosmin",
       "ts": 1760890503
-    },
-    {
-      "score": 19885,
-      "name": "sebi",
-      "ts": 1760885145
     }
   ],
   "Brick Tetris": [
@@ -35,19 +35,36 @@
   ],
   "Brick Jump": [
     {
+      "score": 204,
+      "name": "\u001bdsad",
+      "ts": 1761939975
+    },
+    {
+      "score": 111,
+      "name": "sdsa",
+      "ts": 1761939995
+    },
+    {
       "score": 97,
       "name": "cosmin",
       "ts": 1760889997
+    }
+  ],
+  "Brick Man": [
+    {
+      "score": 26,
+      "name": "das",
+      "ts": 1761939121
     },
     {
-      "score": 69,
-      "name": "asd",
-      "ts": 1761053017
+      "score": 22,
+      "name": "dsadfdfsfds",
+      "ts": 1761939395
     },
     {
-      "score": 41,
-      "name": "joe",
-      "ts": 1761219613
+      "score": 0,
+      "name": "ds",
+      "ts": 1761938920
     }
   ]
 }

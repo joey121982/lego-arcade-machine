@@ -1,5 +1,4 @@
 import pygame
-import RPi.GPIO as GPIO
 from math import floor, ceil
 
 # helper function to check if direction and next_direction are opposites
@@ -31,27 +30,24 @@ class Player:
         screen.blit(self.texture, (self.x * self.tilesize, self.y * self.tilesize, self.tilesize, self.tilesize));
 
     def controls(self):
-        # keys=pygame.key.get_pressed()
+        keys=pygame.key.get_pressed()
 
-        # state = {
-        #     "w":keys[pygame.K_w],
-        #     "s":keys[pygame.K_s],
-        #     "a":keys[pygame.K_a],
-        #     "d":keys[pygame.K_d]
-        # }
+        state = {
+            "w":keys[pygame.K_w],
+            "s":keys[pygame.K_s],
+            "a":keys[pygame.K_a],
+            "d":keys[pygame.K_d]
+        }
 
-        # if state["w"]:
-        #     self.next_direction = "up"
-        # elif state["s"]:
-        #     self.next_direction = "down"
-        # elif state["a"]:
-        #     self.next_direction = "left"
-        # elif state["d"]:
-        #     self.next_direction = "right"
-
-        if GPIO.input(1) == GPIO.HIGH:
+        if state["w"]:
             self.next_direction = "up"
-        # TODO: ...
+        elif state["s"]:
+            self.next_direction = "down"
+        elif state["a"]:
+            self.next_direction = "left"
+        elif state["d"]:
+            self.next_direction = "right"
+
 
     def update(self, map, super):
 
@@ -119,13 +115,12 @@ class Player:
         if (self.x == int(self.x) and self.y == int(self.y)):
             point_score = 5 
             fruit_score = 20
-
             if map.maze[int(self.y)][int(self.x)] == 0:
-                super.score_value += point_score
+                super.score_raw += point_score
                 map.maze[int(self.y)][int(self.x)] = -1
                 map.points -= 1
 
             if map.maze[int(self.y)][int(self.x)] == 2:
-                super.score_value += fruit_score
+                super.score_raw += fruit_score
                 map.maze[int(self.y)][int(self.x)] = -1
                 map.points -= 1
