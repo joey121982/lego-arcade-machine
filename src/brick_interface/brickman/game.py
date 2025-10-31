@@ -27,6 +27,17 @@ class Brickman:
 
         self.start_ticks = pygame.time.get_ticks()
         self.elapsed_seconds = 0.0
+        
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                # stop the game loop and request menu return
+                self.running = False
+                if hasattr(self.globals, "return_to_menu"):
+                    self.globals.return_to_menu = True
+                else:
+                    # ensure the flag exists for older globals shapes
+                    self.globals.return_to_menu = True
 
     def display_score (self):
         try:

@@ -29,37 +29,86 @@ class Shell:
         self.glb = new_globals
         self.game = Menu(self.screen, self.glb)
 
-    def _prompt_for_name(self, max_length: int = 12):
-        font = pygame.font.Font(None, 36)
-        prompt = "New Highscore! Enter name:"
-        name = ""
+    def _prompt_for_name(self, max_length: int = 3) -> str:
+        font_path = "./assets/fonts/Pixellettersfull-BnJ5.ttf"
+        try:
+            prompt_font = pygame.font.Font(font_path, 72)
+            letter_font = pygame.font.Font(font_path, 140)
+            info_font = pygame.font.Font(font_path, 28)
+        except Exception:
+            prompt_font = pygame.font.SysFont(None, 72)
+            letter_font = pygame.font.SysFont(None, 140)
+            info_font = pygame.font.SysFont(None, 28)
+
+        prompt = "New Highscore! Choose 3 letters"
+        name = ["A"] * max_length
+        idx = 0
         clock = pygame.time.Clock()
         active = True
+
         while active:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        active = False
-                        break
+                    if event.key == pygame.K_ESCAPE:
+                        return ""
+                    elif event.key == pygame.K_SPACE:
+                        # advance; if last position, finish
+                        if idx < max_length - 1:
+                            idx += 1
+                        else:
+                            active = False
+                            break
                     elif event.key == pygame.K_BACKSPACE:
-                        name = name[:-1]
-                    else:
-                        if len(name) < max_length:
-                            name += event.unicode
+                        if idx > 0:
+                            idx -= 1
+                            name[idx] = "A"
+                    elif event.key == pygame.K_w:
+                        # increment letter at idx
+                        ch = name[idx]
+                        if len(ch) != 1 or not ch.isalpha():
+                            ch = "A"
+                        code = ord(ch.upper()) - ord("A")
+                        code = (code + 1) % 26
+                        name[idx] = chr(ord("A") + code)
+                    elif event.key == pygame.K_s:
+                        # decrement letter at idx
+                        ch = name[idx]
+                        if len(ch) != 1 or not ch.isalpha():
+                            ch = "A"
+                        code = ord(ch.upper()) - ord("A")
+                        code = (code - 1) % 26
+                        name[idx] = chr(ord("A") + code)
 
-            # draw prompt
             self.screen.fill((0, 0, 0))
-            prompt_surf = font.render(prompt, True, (255, 255, 255))
-            name_surf = font.render(name, True, (200, 200, 200))
-            self.screen.blit(prompt_surf, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
-            self.screen.blit(name_surf, (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 50))
+            prompt_surf = prompt_font.render(prompt, True, (255, 255, 255))
+            self.screen.blit(prompt_surf, (self.glb.WINWIDTH // 2 - prompt_surf.get_width() // 2, self.glb.WINHEIGHT // 2 - 120))
+
+            total_w = 0
+            letter_surfs = []
+            for ch in name:
+                s = letter_font.render(ch, True, (255, 255, 255))
+                letter_surfs.append(s)
+                total_w += s.get_width() + 20
+            start_x = self.glb.WINWIDTH // 2 - total_w // 2
+
+            x = start_x
+            for i, s in enumerate(letter_surfs):
+                rect = s.get_rect(topleft=(x, self.glb.WINHEIGHT // 2 - 20))
+                self.screen.blit(s, rect)
+                if i == idx:
+                    pygame.draw.rect(self.screen, (255, 200, 0), (rect.x - 8, rect.y + rect.height + 8, rect.width + 16, 8))
+                x += s.get_width() + 20
+
+            info = info_font.render("Use UP/DOWN to change letter, SPACE to confirm, BACKSPACE to go back", True, (200, 200, 200))
+            self.screen.blit(info, (self.glb.WINWIDTH // 2 - info.get_width() // 2, self.glb.WINHEIGHT // 2 + 140))
+
             pygame.display.flip()
             clock.tick(30)
 
-        return name.strip()
+        return "".join(name).strip()
 
     def update(self):
         if not self.game:

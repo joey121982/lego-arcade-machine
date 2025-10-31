@@ -25,9 +25,32 @@ class Player:
         self.texture = pygame.transform.scale(self.texture, (self.tilesize, self.tilesize))
 
     def render(self, screen):
-        # color = (255,0,0)
-        # pygame.draw.rect(screen, color, pygame.Rect(self.x * self.tilesize, self.y * self.tilesize, self.tilesize, self.tilesize))
-        screen.blit(self.texture, (self.x * self.tilesize, self.y * self.tilesize, self.tilesize, self.tilesize));
+        # rotate the player based on the direction of movement
+        draw_x = self.x * self.tilesize
+        draw_y = self.y * self.tilesize
+        
+        # - right / none: draw normal
+        # - left: flip horizontally
+        # - up: rotate 90
+        # - down: rotate 270
+
+        direction = getattr(self, "direction", "none")
+
+        try:
+            if direction == "left":
+                img = pygame.transform.flip(self.texture, True, False)
+                rect = img.get_rect(center=(draw_x + self.tilesize // 2, draw_y + self.tilesize // 2))
+                screen.blit(img, rect.topleft)
+            elif direction == "right" or direction == "none":
+                screen.blit(self.texture, (draw_x, draw_y))
+            else:
+                angle_map = {"up": 90, "down": 270}
+                angle = angle_map.get(direction, 0)
+                rotated = pygame.transform.rotozoom(self.texture, angle, 1)
+                rect = rotated.get_rect(center=(draw_x + self.tilesize // 2, draw_y + self.tilesize // 2))
+                screen.blit(rotated, rect.topleft)
+        except Exception:
+            screen.blit(self.texture, (draw_x, draw_y))
 
     def controls(self):
         keys=pygame.key.get_pressed()
