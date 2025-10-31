@@ -20,6 +20,7 @@ import pygame
 try:
     import gpiod
 except Exception:
+    print("Failed to import gpiod")
     gpiod = None
 
 # BCM pin -> pygame key mapping requested by the user (BCM numbers)
@@ -54,8 +55,10 @@ def _line_worker(chip, pin, key, stop_event):
             if line.event_wait(1):
                 ev = line.event_read()
                 if ev.event_type == gpiod.LineEvent.RISING:
+                    print("UNPRESSED BUTTON")
                     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, {"key": key}))
                 elif ev.event_type == gpiod.LineEvent.FALLING:
+                    print("PRESSED BUTTON")
                     pygame.event.post(pygame.event.Event(pygame.KEYUP, {"key": key}))
         except Exception:
             # if any error occurs, break the loop for this worker
