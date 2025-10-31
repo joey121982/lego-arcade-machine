@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 
 import pygame
+import RPi.GPIO
 from .shell import *
 from .globals import *
 
 def run():
+
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BOARD)
+    pins = [1, 2, 3]
+    for pin in pins:
+        GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+
     pygame.init()
     glb = globals()
     screen = pygame.display.set_mode((glb.WINWIDTH, glb.WINHEIGHT))

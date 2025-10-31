@@ -1,4 +1,5 @@
 import pygame
+import RPi.GPIO as GPIO
 from math import floor, ceil
 
 # helper function to check if direction and next_direction are opposites
@@ -17,51 +18,45 @@ class Player:
     x = 0
     y = 0
 
-    def __init__(self, x = 0, y = 0):
+    def __init__(self, tilesize, x = 0, y = 0):
         self.x = x
         self.y = y
+        self.tilesize = tilesize
+        self.texture = pygame.image.load("./assets/brickman/player.png")
+        self.texture = pygame.transform.scale(self.texture, (self.tilesize, self.tilesize))
 
-    def render(self, screen, tilesize):
-        color = (255,0,0)
-        pygame.draw.rect(screen, color, pygame.Rect(self.x * tilesize, self.y * tilesize, tilesize, tilesize))
-    
+    def render(self, screen):
+        # color = (255,0,0)
+        # pygame.draw.rect(screen, color, pygame.Rect(self.x * self.tilesize, self.y * self.tilesize, self.tilesize, self.tilesize))
+        screen.blit(self.texture, (self.x * self.tilesize, self.y * self.tilesize, self.tilesize, self.tilesize));
+
     def controls(self):
-        keys=pygame.key.get_pressed()
+        # keys=pygame.key.get_pressed()
 
-        state = {
-            "w":keys[pygame.K_w],
-            "s":keys[pygame.K_s],
-            "a":keys[pygame.K_a],
-            "d":keys[pygame.K_d]
-        }
+        # state = {
+        #     "w":keys[pygame.K_w],
+        #     "s":keys[pygame.K_s],
+        #     "a":keys[pygame.K_a],
+        #     "d":keys[pygame.K_d]
+        # }
 
-        if state["w"]:
+        # if state["w"]:
+        #     self.next_direction = "up"
+        # elif state["s"]:
+        #     self.next_direction = "down"
+        # elif state["a"]:
+        #     self.next_direction = "left"
+        # elif state["d"]:
+        #     self.next_direction = "right"
+
+        if GPIO.input(1) == GPIO.HIGH:
             self.next_direction = "up"
-        elif state["s"]:
-            self.next_direction = "down"
-        elif state["a"]:
-            self.next_direction = "left"
-        elif state["d"]:
-            self.next_direction = "right"
+        # TODO: ...
 
     def update(self, map, super):
-        # --- TODO
-        # rewrite to reduce code, specifically in the collision checks
-        # also, currently in the case of successfully changing direction mid-movement,
-        # collision checks are done twice.
-        #
-        # p.s. este 5 dimineata in momentul in care scriu acest cod, my apologies.
-        # --- joey
 
         self.controls()
         movespeed = round(1 / 12, 1) # 0.1, but leave this as is, so we can change the speed later.
-
-        # ---
-        # if next_direction is the opposite of direction, we can safely replace them,
-        # as going back from where you just left means there WAS a space there.
-        # 
-        # warning: this assumes logic applies to videogames.
-        # --- joey
 
         if self.next_direction != "none" and opposite_check(self.direction, self.next_direction):
             self.direction = self.next_direction

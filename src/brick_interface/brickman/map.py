@@ -29,30 +29,23 @@ class Map:
         self.player_start = data["player_start"]
 
     def render(self, screen, tilesize):
-        space = (10,10,10)
-        # wall = (200,200,200)
+        self.back_texture.set_alpha(50)
 
         for i in range(0, self.height):
             for j in range(0, self.width):
-                # 0 = punct    1 = perete     2 = fruct     -1 = spatiu
                  
-                # color = wall if self.maze[i][j] == 1 else space 
-                # pygame.draw.rect(screen, color, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
-                self.back_texture.set_alpha(50)
+                # 0 = punct    1 = perete     2 = fruct     -1 = spatiu
 
                 if self.maze[i][j] == -1:
-                    # pygame.draw.rect(screen, space, pygame.Rect(j*tilesize, i*tilesize, tilesize, tilesize))
                     screen.blit(self.back_texture, (j * tilesize, i * tilesize))
 
-                if self.maze[i][j] == 1:
+                elif self.maze[i][j] == 1:
                     screen.blit(self.wall_texture, (j * tilesize, i * tilesize))
 
-                is_fruit = self.maze[i][j] == 2
-                if is_fruit:
+                elif self.maze[i][j] == 2:
                     screen.blit(self.back_texture, (j * tilesize, i * tilesize))
                     pygame.draw.circle(screen, (255, 0, 0), (j*tilesize + tilesize//2, i*tilesize + tilesize //2), tilesize//6)
                 
-                is_coin = self.maze[i][j] == 0 
-                if is_coin:
+                elif self.maze[i][j] == 0 :
                     screen.blit(self.back_texture, (j * tilesize, i * tilesize))
                     pygame.draw.circle(screen, (255, 255, 255), (j*tilesize + tilesize//2, i*tilesize + tilesize //2), tilesize//12)

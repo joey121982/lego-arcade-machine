@@ -13,7 +13,7 @@ class Brickman:
         self.globals = globals
         self.map = Map(self.globals)
         self.tilesize = self.globals.WINHEIGHT//self.map.height
-        self.player = Player(self.map.player_start[0], self.map.player_start[1])
+        self.player = Player(self.tilesize, self.map.player_start[0], self.map.player_start[1])
         self.time = 0
         self.score_value = 0
         self.font_path = "././assets/fonts/Pixellettersfull-BnJ5.ttf"
@@ -32,7 +32,7 @@ class Brickman:
     def render(self):
         self.screen.fill((0,0,0))
         self.map.render(self.screen, self.tilesize)
-        self.player.render(self.screen, self.tilesize)
+        self.player.render(self.screen)
         self.display_score()
 
         if self.globals.DEBUG_MODE == True:
