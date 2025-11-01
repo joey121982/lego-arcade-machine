@@ -6,7 +6,7 @@ from .player import *
 ##############################
 ##############################
 ##############################
-FINAL_MAP_NUMBER = 3
+FINAL_MAP_NUMBER = 10
 ##############################
 ##############################
 ##############################
@@ -52,7 +52,7 @@ class Brickman:
         seconds = elapsed_int % 60
         time_text = f"{minutes:02d}:{seconds:02d}"
 
-        eff = self.score_raw / max(1.0, self.elapsed_seconds)
+        eff = self.score_value
         eff_text = f"{eff:.2f}"
         
         eff_surface = font.render(f"Score/time: {eff_text}", True, (255, 0, 0))
