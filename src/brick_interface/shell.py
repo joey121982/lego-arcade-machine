@@ -178,6 +178,8 @@ class Shell:
                         score = int(self.game.playable_screen.score)
                     except Exception:
                         score = 0
+                elif hasattr(self.game, 'score_raw'):
+                    score = int(self.game.score_raw)
                 elif hasattr(self.game, 'score_value'):
                     try:
                         score = int(self.game.score_value)
