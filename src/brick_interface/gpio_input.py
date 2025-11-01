@@ -23,14 +23,16 @@ except Exception:
     print("Failed to import gpiod")
     gpiod = None
 
-# BCM pin -> pygame key mapping requested by the user (BCM numbers)
+# BCM pin -> pygame key mapping requested by the user.
+# Accept either an integer offset (e.g. 26) or a gpiod line name (e.g. 'GPIO26').
 PIN_KEY_MAP = {
-    26: pygame.K_a,      # LEFT (A)  -> physical pin 37
-    19: pygame.K_d,      # RIGHT (D) -> physical pin 35
-    13: pygame.K_w,      # UP (W)    -> physical pin 33
-    6:  pygame.K_s,      # DOWN (S)  -> physical pin 31
-    5:  pygame.K_ESCAPE, # MENU (ESCAPE) -> physical pin 29
-    21: pygame.K_SPACE   # BUTTON_X (SPACE) -> physical pin 40
+    # use the GPIO<nn> name style so tools like gpiomon work the same way
+    "GPIO26": pygame.K_a,      # LEFT (A)  -> physical pin 37
+    "GPIO19": pygame.K_d,      # RIGHT (D) -> physical pin 35
+    "GPIO13": pygame.K_w,      # UP (W)    -> physical pin 33
+    "GPIO6":  pygame.K_s,      # DOWN (S)  -> physical pin 31
+    "GPIO5":  pygame.K_ESCAPE, # MENU (ESCAPE) -> physical pin 29
+    "GPIO21": pygame.K_SPACE   # BUTTON_X (SPACE) -> physical pin 40
 }
 
 CHIP_NAME = "gpiochip0"
